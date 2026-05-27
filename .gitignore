@@ -71,6 +71,5 @@ dump/
 .npm/
 
 # Optional lockfile rule:
-package-lock.json
 # Keep pnpm-lock.yaml committed if using pnpm.
 # Keep yarn.lock committed if using yarn.
