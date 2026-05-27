@@ -1,13 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+@theme {
+    --font-jetbrains:
+        "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+
+    --color-primary-background: #0f172a;
+    --color-secondary-surface: #1e293b;
+    --color-accent: #fde047;
+    --color-action: #eab308;
+    --color-text-primary: #f8fafc;
+    --color-text-muted: #94a3b8;
+    --color-border-divider: #334155;
+}
+
 html {
-    background: #0f172a;
+    background: var(--color-primary-background);
 }
 
 body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background: #0f172a;
-    color: #f8fafc;
+    background: var(--color-primary-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-jetbrains);
 }
