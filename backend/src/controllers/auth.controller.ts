@@ -3,6 +3,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { registerSchema } from "../schemas/auth.schema.js";
 import { AuthService, type RegisterResult } from "../services/auth.service.js";
 import type { ApiResponse } from "../types/api-response.js";
+import { env } from "../config/env.config.js";
 
 export const register = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
@@ -14,6 +15,13 @@ export const register = asyncHandler(
             message: "User registered successfully",
             data: result,
         };
+
+        res.cookie("accessToken", result.token, {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
 
         res.status(201).json(response);
     },
