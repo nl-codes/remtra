@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
-import { registerSchema } from "../schemas/auth.schema.js";
+import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
 import { AuthService, type RegisterResult } from "../services/auth.service.js";
 import type { ApiResponse } from "../types/api-response.js";
 import { env } from "../config/env.config.js";
@@ -24,5 +24,27 @@ export const register = asyncHandler(
         });
 
         res.status(201).json(response);
+    },
+);
+
+export const login = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const { body } = loginSchema.parse({ body: req.body });
+        const result = await AuthService.login(body);
+
+        const response: ApiResponse<RegisterResult> = {
+            success: true,
+            message: "User login successfully",
+            data: result,
+        };
+
+        res.cookie("accessToken", result.token, {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(200).json(response);
     },
 );
