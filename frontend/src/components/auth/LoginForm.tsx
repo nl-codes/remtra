@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { type ChangeEvent, type SubmitEvent, useState } from "react";
+import { type ChangeEvent, type SubmitEventHandler, useState } from "react";
 import { ZodError } from "zod";
 import {
     loginFormSchema,
@@ -50,9 +50,6 @@ export default function LoginForm() {
         useState<LoginFormValues>(initialFormValues);
     const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
     const [serverError, setServerError] = useState("");
-    const [loggedInUser, setLoggedInUser] = useState<
-        LoginResponse["user"] | null
-    >(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -72,12 +69,9 @@ export default function LoginForm() {
         setServerError("");
     };
 
-    const handleSubmit = async (
-        event: SubmitEvent<HTMLFormElement>,
-    ): Promise<void> => {
+    const handleSubmit: SubmitEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
         setServerError("");
-        setLoggedInUser(null);
 
         const parsedForm = loginFormSchema.safeParse(formValues);
 
@@ -92,8 +86,7 @@ export default function LoginForm() {
             const response = await loginUser(parsedForm.data);
 
             if (response.data) {
-                setLoggedInUser(response.data.user);
-                navigate("/dashboard", { replace: true });
+                navigate(routes.dashboard, { replace: true });
             }
         } catch (error) {
             setServerError(getApiErrorMessage(error));
@@ -109,7 +102,7 @@ export default function LoginForm() {
                     Log in
                 </h2>
                 <p className="hidden md:block mt-2 text-sm text-text-muted">
-                    Your existing email, and secure password.
+                    Enter your email and password.
                 </p>
             </div>
 
@@ -156,12 +149,6 @@ export default function LoginForm() {
                 {serverError ? (
                     <div className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
                         {serverError}
-                    </div>
-                ) : null}
-
-                {loggedInUser ? (
-                    <div className="rounded-md border border-accent/40 bg-accent/10 px-3 py-2 text-sm text-yellow-100">
-                        Logged in as {loggedInUser.username}.
                     </div>
                 ) : null}
 
