@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader2, Lock, Mail, UserRound } from "lucide-react";
-import { type ChangeEvent, type SubmitEvent, useState } from "react";
+import { type ChangeEvent, type SubmitEventHandler, useState } from "react";
 import { ZodError } from "zod";
 import {
     registerFormSchema,
@@ -73,9 +73,7 @@ function RegisterForm() {
         setServerError("");
     };
 
-    const handleSubmit = async (
-        event: SubmitEvent<HTMLFormElement>,
-    ): Promise<void> => {
+    const handleSubmit: SubmitEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
         setServerError("");
         setRegisteredUser(null);
