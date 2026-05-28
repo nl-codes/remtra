@@ -15,7 +15,7 @@ export interface AuthResult {
     token: string;
 }
 
-export interface AuthReponseData {
+export interface AuthResponseData {
     user: AuthUserResponse;
 }
 
