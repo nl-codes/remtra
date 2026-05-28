@@ -1,9 +1,6 @@
-import logo from "../../assets/Logo.png";
 function AuthBrandPanel() {
     return (
         <div className="flex flex-col justify-center">
-            <img src={logo} width={80} />
-
             <h1 className="max-w-2xl text-4xl font-bold leading-tight text-text-primary sm:text-5xl">
                 Remember when it happened. Keep today from drifting.
             </h1>
