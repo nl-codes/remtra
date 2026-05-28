@@ -16,7 +16,7 @@ function RegisterPage() {
                     </div>
 
                     <div className="hidden md:block">
-                        <AuthBrandPanel />
+                        <AuthBrandPanel mode="register" />
                     </div>
                 </div>
             </section>
