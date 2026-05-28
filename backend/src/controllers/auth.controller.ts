@@ -1,16 +1,20 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
-import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
-import { AuthService, type AuthReponseData } from "../services/auth.service.js";
+import { getValidatedBody } from "../lib/validated-request.js";
+import type { LoginInput, RegisterInput } from "../schemas/auth.schema.js";
+import {
+    AuthService,
+    type AuthResponseData,
+} from "../services/auth.service.js";
 import type { ApiResponse } from "../types/api-response.js";
 import { env } from "../config/env.config.js";
 
 export const register = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
-        const { body } = registerSchema.parse({ body: req.body });
+        const body = getValidatedBody<RegisterInput>(req);
         const result = await AuthService.register(body);
 
-        const response: ApiResponse<AuthReponseData> = {
+        const response: ApiResponse<AuthResponseData> = {
             success: true,
             message: "User registered successfully",
             data: { user: result.user },
@@ -29,12 +33,12 @@ export const register = asyncHandler(
 
 export const login = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
-        const { body } = loginSchema.parse({ body: req.body });
+        const body = getValidatedBody<LoginInput>(req);
         const result = await AuthService.login(body);
 
-        const response: ApiResponse<AuthReponseData> = {
+        const response: ApiResponse<AuthResponseData> = {
             success: true,
-            message: "User login successfully",
+            message: "User logged in successfully",
             data: { user: result.user },
         };
 
