@@ -190,7 +190,9 @@ function RegisterForm() {
                     )}
                 </button>
                 <p className="text-center text-text-muted underline">
-                    <Link to={routes.login}>Log in to existing account</Link>
+                    <Link to={routes.login} replace>
+                        Log in to existing account
+                    </Link>
                 </p>
             </form>
         </div>

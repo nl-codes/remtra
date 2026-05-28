@@ -167,7 +167,9 @@ export default function LoginForm() {
                     )}
                 </button>
                 <p className="text-center text-text-muted underline">
-                    <Link to={routes.register}>Sign up instead</Link>
+                    <Link to={routes.register} replace>
+                        Sign up instead
+                    </Link>
                 </p>
             </form>
         </div>
