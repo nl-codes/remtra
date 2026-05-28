@@ -10,6 +10,8 @@ import { registerUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import type { RegisterResponse } from "../../types/auth";
 import FormInput from "./FormInput";
+import { Link } from "react-router-dom";
+import { routes } from "../../constants/routes";
 
 type RegisterField = keyof RegisterFormValues;
 type FormErrors = Partial<Record<RegisterField, string>>;
@@ -107,7 +109,7 @@ function RegisterForm() {
                 <h2 className="text-2xl font-semibold text-text-primary">
                     Create account
                 </h2>
-                <p className="mt-2 text-sm text-text-muted">
+                <p className="hidden md:block mt-2 text-sm text-text-muted">
                     Start with a username, email, and secure password.
                 </p>
             </div>
@@ -189,6 +191,9 @@ function RegisterForm() {
                         "Create account"
                     )}
                 </button>
+                <p className="text-center text-text-muted underline">
+                    <Link to={routes.login}>Log in to existing account</Link>
+                </p>
             </form>
         </div>
     );
