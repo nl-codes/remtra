@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { AppError } from "../middlewares/error.middleware.js";
 import { UserModel } from "../models/user.model.js";
-import type { RegisterInput } from "../schemas/auth.schema.js";
+import type { LoginInput, RegisterInput } from "../schemas/auth.schema.js";
 import { generateToken } from "../lib/jwt.js";
 
 export interface AuthUserResponse {
@@ -16,7 +16,9 @@ export interface RegisterResult {
 }
 
 export class AuthService {
-    public static async register(input: RegisterInput): Promise<RegisterResult> {
+    public static async register(
+        input: RegisterInput,
+    ): Promise<RegisterResult> {
         const normalizedEmail = input.email.toLowerCase();
         const normalizedUsername = input.username.trim();
 
@@ -35,6 +37,39 @@ export class AuthService {
             email: normalizedEmail,
             password: hashedPassword,
         });
+
+        const userId = user._id.toString();
+        const token = generateToken({ userId });
+
+        return {
+            user: {
+                id: userId,
+                username: user.username,
+                email: user.email,
+            },
+            token,
+        };
+    }
+
+    public static async login(input: LoginInput): Promise<RegisterResult> {
+        const normalizedEmail = input.email.toLowerCase();
+
+        const user = await UserModel.findOne({
+            email: normalizedEmail,
+        }).select("+password");
+
+        if (!user) {
+            throw new AppError("Invalid email or password", 401);
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(
+            input.password,
+            user.password,
+        );
+
+        if (!isPasswordCorrect) {
+            throw new AppError("Invalid email or password", 401);
+        }
 
         const userId = user._id.toString();
         const token = generateToken({ userId });
