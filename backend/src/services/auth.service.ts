@@ -10,15 +10,17 @@ export interface AuthUserResponse {
     email: string;
 }
 
-export interface RegisterResult {
+export interface AuthResult {
     user: AuthUserResponse;
     token: string;
 }
 
+export interface AuthReponseData {
+    user: AuthUserResponse;
+}
+
 export class AuthService {
-    public static async register(
-        input: RegisterInput,
-    ): Promise<RegisterResult> {
+    public static async register(input: RegisterInput): Promise<AuthResult> {
         const normalizedEmail = input.email.toLowerCase();
         const normalizedUsername = input.username.trim();
 
@@ -51,7 +53,7 @@ export class AuthService {
         };
     }
 
-    public static async login(input: LoginInput): Promise<RegisterResult> {
+    public static async login(input: LoginInput): Promise<AuthResult> {
         const normalizedEmail = input.email.toLowerCase();
 
         const user = await UserModel.findOne({
