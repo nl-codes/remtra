@@ -7,7 +7,7 @@ import {
     type AuthResponseData,
 } from "../services/auth.service.js";
 import type { ApiResponse } from "../types/api-response.js";
-import { env } from "../config/env.config.js";
+import { accessTokenCookieOptions } from "../lib/auth-cookie.js";
 
 export const register = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
@@ -20,12 +20,7 @@ export const register = asyncHandler(
             data: { user: result.user },
         };
 
-        res.cookie("accessToken", result.token, {
-            httpOnly: true,
-            secure: env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("accessToken", result.token, accessTokenCookieOptions());
 
         res.status(201).json(response);
     },
@@ -42,12 +37,7 @@ export const login = asyncHandler(
             data: { user: result.user },
         };
 
-        res.cookie("accessToken", result.token, {
-            httpOnly: true,
-            secure: env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("accessToken", result.token, accessTokenCookieOptions());
 
         res.status(200).json(response);
     },
