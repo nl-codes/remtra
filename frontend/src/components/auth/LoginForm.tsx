@@ -10,7 +10,8 @@ import { loginUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import type { LoginResponse } from "../../types/auth";
 import FormInput from "./FormInput";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { routes } from "../../constants/routes";
 
 type LoginField = keyof LoginFormValues;
 type FormErrors = Partial<Record<LoginField, string>>;
@@ -107,7 +108,7 @@ export default function LoginForm() {
                 <h2 className="text-2xl font-semibold text-text-primary">
                     Log in
                 </h2>
-                <p className="mt-2 text-sm text-text-muted">
+                <p className="hidden md:block mt-2 text-sm text-text-muted">
                     Your existing email, and secure password.
                 </p>
             </div>
@@ -178,6 +179,9 @@ export default function LoginForm() {
                         "Login"
                     )}
                 </button>
+                <p className="text-center text-text-muted underline">
+                    <Link to={routes.register}>Sign up instead</Link>
+                </p>
             </form>
         </div>
     );
