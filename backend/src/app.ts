@@ -8,10 +8,23 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
+const allowedOrigins = [env.CLIENT_URL, ...env.ADDITIONAL_CLIENT_URLS];
 
 app.use(helmet());
 app.use(cookieParser());
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use(
+    cors({
+        origin(origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+                return;
+            }
+
+            callback(new Error("Not allowed by CORS"));
+        },
+        credentials: true,
+    }),
+);
 app.use(express.json());
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 

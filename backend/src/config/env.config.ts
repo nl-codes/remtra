@@ -12,6 +12,20 @@ const envSchema = z.object({
     JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
     JWT_EXPIRES_IN: z.string().min(1).default("7d"),
     CLIENT_URL: z.url().default("http://localhost:8081"),
+    ADDITIONAL_CLIENT_URLS: z
+        .string()
+        .optional()
+        .transform((value) => {
+            if (!value) {
+                return [];
+            }
+
+            return value
+                .split(",")
+                .map((url) => url.trim())
+                .filter(Boolean);
+        })
+        .pipe(z.array(z.url())),
 });
 
 export const env = envSchema.parse(process.env);
