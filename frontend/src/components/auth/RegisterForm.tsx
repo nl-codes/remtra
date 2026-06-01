@@ -12,6 +12,7 @@ import type { RegisterResponse } from "../../types/auth";
 import FormInput from "./FormInput";
 import { Link } from "react-router-dom";
 import { routes } from "../../constants/routes";
+import { appToast } from "../../lib/toast";
 
 type RegisterField = keyof RegisterFormValues;
 type FormErrors = Partial<Record<RegisterField, string>>;
@@ -89,9 +90,13 @@ function RegisterForm() {
 
             if (response.data) {
                 setFormValues(initialFormValues);
+                appToast.success("Account created successfully");
             }
         } catch (error) {
-            setServerError(getApiErrorMessage(error));
+            const message = getApiErrorMessage(error);
+
+            setServerError(message);
+            appToast.error(message);
         } finally {
             setIsSubmitting(false);
         }
