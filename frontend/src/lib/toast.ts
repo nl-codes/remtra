@@ -46,9 +46,11 @@ const getToastStyle = (type: keyof typeof toastColors): CSSProperties => {
         fontSize: "clamp(0.875rem, 2.5vw, 1rem)",
         margin: "0 0 12px",
         minHeight: 49,
-        padding: "10px 14px",
-        width: "min(80%, 600)",
-        maxWidth: "calc(80%)",
+        padding: "10px 42px 10px 14px",
+        minWidth: 254,
+        width: "max-content",
+        maxWidth: "calc(100vw - 32px)",
+        whiteSpace: "nowrap",
         wordBreak: "break-word",
     };
 };

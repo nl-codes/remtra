@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, User } from "lucide-react";
 import { type ChangeEvent, type SubmitEventHandler, useState } from "react";
 import { ZodError } from "zod";
 import {
@@ -18,7 +18,7 @@ type LoginField = keyof LoginFormValues;
 type FormErrors = Partial<Record<LoginField, string>>;
 
 const initialFormValues: LoginFormValues = {
-    email: "",
+    identifier: "",
     password: "",
 };
 
@@ -38,7 +38,7 @@ const getValidationErrors = (error: ZodError<LoginFormValues>): FormErrors => {
     return error.issues.reduce<FormErrors>((errors, issue) => {
         const field = issue.path[0];
 
-        if (field === "email" || field === "password") {
+        if (field === "identifier" || field === "password") {
             errors[field] = issue.message;
         }
 
@@ -107,20 +107,21 @@ export default function LoginForm() {
                     Log in
                 </h2>
                 <p className="hidden md:block mt-2 text-sm text-text-muted">
-                    Enter your email and password.
+                    Enter your identifier and password.
                 </p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
                 <FormInput
-                    error={fieldErrors.email}
-                    icon={<Mail aria-hidden="true" size={18} />}
-                    label="Email"
-                    name="email"
+                    error={fieldErrors.identifier}
+                    icon={<User aria-hidden="true" size={18} />}
+                    label="Email or Username"
+                    name="identifier"
                     onChange={handleChange}
-                    placeholder="you@example.com"
-                    type="email"
-                    value={formValues.email}
+                    placeholder="myusername or my@email.com"
+                    type="text"
+                    autoComplete="username"
+                    value={formValues.identifier}
                 />
 
                 <FormInput
@@ -130,6 +131,7 @@ export default function LoginForm() {
                     name="password"
                     onChange={handleChange}
                     placeholder="********"
+                    autoComplete="current-password"
                     trailingAction={
                         <button
                             aria-label={
