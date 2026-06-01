@@ -10,7 +10,7 @@ import { registerUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import type { RegisterResponse } from "../../types/auth";
 import FormInput from "./FormInput";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
 import { appToast } from "../../lib/toast";
 
@@ -58,6 +58,8 @@ function RegisterForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    const navigate = useNavigate();
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
 
@@ -91,6 +93,7 @@ function RegisterForm() {
             if (response.data) {
                 setFormValues(initialFormValues);
                 appToast.success("Account created successfully");
+                navigate(routes.dashboard, { replace: true });
             }
         } catch (error) {
             const message = getApiErrorMessage(error);
