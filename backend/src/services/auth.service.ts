@@ -54,10 +54,11 @@ export class AuthService {
     }
 
     public static async login(input: LoginInput): Promise<AuthResult> {
-        const normalizedEmail = input.email.toLowerCase();
+        const normalizedEmail = input.identifier.toLowerCase();
+        const normalizedUsername = input.identifier.trim();
 
         const user = await UserModel.findOne({
-            email: normalizedEmail,
+            $or: [{ email: normalizedEmail }, { username: normalizedUsername }],
         }).select("+password");
 
         if (!user) {
