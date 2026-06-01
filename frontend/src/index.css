@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+@import "react-toastify/dist/ReactToastify.css";
 
 @theme {
     --font-jetbrains:
@@ -26,4 +27,22 @@ body {
     background: var(--color-primary-background);
     color: var(--color-text-primary);
     font-family: var(--font-jetbrains);
+}
+
+.Toastify__toast-container {
+    width: min(92vw, 420px);
+    --toastify-font-family: var(--font-jetbrains);
+}
+
+.Toastify__toast {
+    overflow: hidden;
+}
+
+.Toastify__close-button {
+    color: var(--color-text-primary);
+    opacity: 0.78;
+}
+
+.Toastify__close-button:hover {
+    opacity: 1;
 }

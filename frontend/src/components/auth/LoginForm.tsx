@@ -12,6 +12,7 @@ import type { LoginResponse } from "../../types/auth";
 import FormInput from "./FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
+import { appToast } from "../../lib/toast";
 
 type LoginField = keyof LoginFormValues;
 type FormErrors = Partial<Record<LoginField, string>>;
@@ -86,10 +87,14 @@ export default function LoginForm() {
             const response = await loginUser(parsedForm.data);
 
             if (response.data) {
+                appToast.success("Logged in successfully");
                 navigate(routes.dashboard, { replace: true });
             }
         } catch (error) {
-            setServerError(getApiErrorMessage(error));
+            const message = getApiErrorMessage(error);
+
+            setServerError(message);
+            appToast.error(message);
         } finally {
             setIsSubmitting(false);
         }
