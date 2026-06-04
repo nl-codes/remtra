@@ -45,5 +45,13 @@ export const loginSchema = z.object({
         ),
 });
 
+export const forgotPasswordSchema = z.object({
+    body: z.object({
+        email: z.email("Enter a valid email address").toLowerCase(),
+    }),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
 export type LoginInput = z.infer<typeof loginSchema>["body"];
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>["body"];
