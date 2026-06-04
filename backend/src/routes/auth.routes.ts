@@ -1,11 +1,21 @@
 import { Router } from "express";
-import { register, login } from "../controllers/auth.controller.js";
+import {
+    register,
+    login,
+    forgotPassword,
+} from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/zod.middleware.js";
-import { registerSchema, loginSchema } from "../schemas/auth.schema.js";
+import {
+    registerSchema,
+    loginSchema,
+    forgotPasswordSchema,
+} from "../schemas/auth.schema.js";
 
 const router = Router();
 
 router.post("/register", validate(registerSchema), register);
 router.post("/login", validate(loginSchema), login);
+
+router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 
 export default router;
