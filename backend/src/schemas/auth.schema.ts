@@ -51,7 +51,16 @@ export const forgotPasswordSchema = z.object({
     }),
 });
 
+export const verifyResetPasswordTokenSchema = z.object({
+    params: z.object({
+        token: z.string().regex(/^[a-f0-9]{64}$/, "Invalid reset token"),
+    }),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
 export type LoginInput = z.infer<typeof loginSchema>["body"];
 
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>["body"];
+export type VerifyResetPasswordTokenInput = z.infer<
+    typeof verifyResetPasswordTokenSchema
+>["params"];
