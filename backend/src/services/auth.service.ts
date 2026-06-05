@@ -5,6 +5,7 @@ import type {
     ForgotPasswordInput,
     LoginInput,
     RegisterInput,
+    ResetPasswordInput,
     VerifyResetPasswordTokenInput,
 } from "../schemas/auth.schema.js";
 import { generateToken } from "../lib/jwt.js";
@@ -181,5 +182,29 @@ export class AuthService {
         });
 
         return resetTokenExists !== null;
+    }
+
+    public static async resetPassword(input: ResetPasswordInput): Promise<void> {
+        const resetPasswordTokenHash = hashToken(input.token);
+        const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+
+        const passwordReset = await PasswordResetModel.findOneAndDelete({
+            tokenHash: resetPasswordTokenHash,
+            tokenExpiresAt: { $gt: new Date() },
+        });
+
+        if (!passwordReset) {
+            throw new AppError("Reset token is invalid or has expired", 400);
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            passwordReset.userId,
+            { password: hashedPassword },
+            { runValidators: true },
+        );
+
+        if (!updatedUser) {
+            throw new AppError("Unable to reset password", 400);
+        }
     }
 }

@@ -4,6 +4,7 @@ import {
     login,
     forgotPassword,
     verifyResetPasswordToken,
+    resetPassword,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/zod.middleware.js";
 import {
@@ -11,6 +12,7 @@ import {
     loginSchema,
     forgotPasswordSchema,
     verifyResetPasswordTokenSchema,
+    resetPasswordSchema,
 } from "../schemas/auth.schema.js";
 
 const router = Router();
@@ -24,5 +26,6 @@ router.get(
     validate(verifyResetPasswordTokenSchema),
     verifyResetPasswordToken,
 );
+router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 export default router;

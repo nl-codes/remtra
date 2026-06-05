@@ -8,6 +8,7 @@ import type {
     ForgotPasswordInput,
     LoginInput,
     RegisterInput,
+    ResetPasswordInput,
     VerifyResetPasswordTokenInput,
 } from "../schemas/auth.schema.js";
 import {
@@ -101,6 +102,21 @@ export const verifyResetPasswordToken = asyncHandler(
         const response: ApiResponse<void> = {
             success: success,
             message: message,
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const resetPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const body = getValidatedBody<ResetPasswordInput>(req);
+
+        await AuthService.resetPassword(body);
+
+        const response: ApiResponse<void> = {
+            success: true,
+            message: "Password reset successfully",
         };
 
         res.status(200).json(response);
