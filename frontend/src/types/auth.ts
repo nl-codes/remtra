@@ -22,3 +22,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     user: AuthUser;
 }
+
+export interface ForgotPasswordRequest {
+    email: string;
+}
