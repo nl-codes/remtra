@@ -36,5 +36,12 @@ export const loginFormSchema = z
         },
     );
 
+export const forgotPasswordFormSchema = z.object({
+    email: z.email("Enter a valid email address").toLowerCase(),
+});
+
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
+export type ForgotPasswordFormValues = z.infer<
+    typeof forgotPasswordFormSchema
+>;
