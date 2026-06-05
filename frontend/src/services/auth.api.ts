@@ -6,6 +6,7 @@ import type {
     LoginRequest,
     LoginResponse,
     ForgotPasswordRequest,
+    ResetPasswordRequest,
 } from "../types/auth";
 
 export const registerUser = async (
@@ -37,5 +38,26 @@ export const forgotPassword = async (
         "/auth/forgot-password",
         payload,
     );
+    return response.data;
+};
+
+export const verifyResetPasswordToken = async (
+    token: string,
+): Promise<ApiResponse<void>> => {
+    const response = await api.get<ApiResponse<void>>(
+        `/auth/validate-reset-password-token/${encodeURIComponent(token)}`,
+    );
+
+    return response.data;
+};
+
+export const resetPassword = async (
+    payload: ResetPasswordRequest,
+): Promise<ApiResponse<void>> => {
+    const response = await api.post<ApiResponse<void>>(
+        "/auth/reset-password",
+        payload,
+    );
+
     return response.data;
 };
