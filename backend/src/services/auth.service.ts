@@ -194,7 +194,7 @@ export class AuthService {
         });
 
         if (!passwordReset) {
-            throw new AppError("Reset token is invalid or has expired", 400);
+            throw new AppError("Reset password link has expired", 400);
         }
 
         const updatedUser = await UserModel.findByIdAndUpdate(
