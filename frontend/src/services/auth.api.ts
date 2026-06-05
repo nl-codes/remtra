@@ -5,6 +5,7 @@ import type {
     RegisterResponse,
     LoginRequest,
     LoginResponse,
+    ForgotPasswordRequest,
 } from "../types/auth";
 
 export const registerUser = async (
@@ -26,5 +27,15 @@ export const loginUser = async (
         payload,
     );
 
+    return response.data;
+};
+
+export const forgotPassword = async (
+    payload: ForgotPasswordRequest,
+): Promise<ApiResponse<void>> => {
+    const response = await api.post<ApiResponse<void>>(
+        "/auth/forgot-password",
+        payload,
+    );
     return response.data;
 };
