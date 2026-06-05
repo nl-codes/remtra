@@ -1,12 +1,19 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
-import { getValidatedBody } from "../lib/validated-request.js";
+import {
+    getValidatedBody,
+    getValidatedParams,
+} from "../lib/validated-request.js";
 import type {
     ForgotPasswordInput,
     LoginInput,
     RegisterInput,
+    VerifyResetPasswordTokenInput,
 } from "../schemas/auth.schema.js";
-import { AuthService, type AuthResponseData } from "../services/auth.service.js";
+import {
+    AuthService,
+    type AuthResponseData,
+} from "../services/auth.service.js";
 import type { ApiResponse } from "../types/api-response.js";
 import { accessTokenCookieOptions } from "../lib/auth-cookie.js";
 import { sendEmail } from "../services/email.service.js";
@@ -72,6 +79,28 @@ export const forgotPassword = asyncHandler(
             success: true,
             message:
                 "If an account exists, a reset password link has been sent to the email.",
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const verifyResetPasswordToken = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const params = getValidatedParams<VerifyResetPasswordTokenInput>(req);
+        const isResetPasswordTokenValid =
+            await AuthService.verifyResetPasswordToken(params);
+
+        let success = false;
+        let message = "Token invalid or has expired";
+        if (isResetPasswordTokenValid) {
+            success = true;
+            message = "Token valid";
+        }
+
+        const response: ApiResponse<void> = {
+            success: success,
+            message: message,
         };
 
         res.status(200).json(response);

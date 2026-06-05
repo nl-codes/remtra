@@ -5,6 +5,7 @@ import type {
     ForgotPasswordInput,
     LoginInput,
     RegisterInput,
+    VerifyResetPasswordTokenInput,
 } from "../schemas/auth.schema.js";
 import { generateToken } from "../lib/jwt.js";
 import {
@@ -167,5 +168,18 @@ export class AuthService {
         );
 
         return { user: existingUser, token: resetPasswordToken };
+    }
+
+    public static async verifyResetPasswordToken(
+        input: VerifyResetPasswordTokenInput,
+    ): Promise<boolean> {
+        const resetPasswordTokenHash = hashToken(input.token);
+
+        const resetTokenExists = await PasswordResetModel.findOne({
+            tokenHash: resetPasswordTokenHash,
+            tokenExpiresAt: { $gt: new Date() },
+        });
+
+        return resetTokenExists !== null;
     }
 }
