@@ -159,6 +159,12 @@ export default function LoginForm() {
                     </div>
                 ) : null}
 
+                <div className="text-right block text-sm font-medium text-text-muted underline">
+                    <Link to={routes.forgotPassword} replace>
+                        {" "}
+                        Forgot Password?
+                    </Link>
+                </div>
                 <button
                     className="flex h-11 w-full items-center justify-center rounded-md bg-action px-4 text-sm font-semibold text-primary-background transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-70"
                     disabled={isSubmitting}

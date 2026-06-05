@@ -36,5 +36,24 @@ export const loginFormSchema = z
         },
     );
 
+export const forgotPasswordFormSchema = z.object({
+    email: z.email("Enter a valid email address").toLowerCase(),
+});
+
+export const resetPasswordFormSchema = z
+    .object({
+        newPassword: z
+            .string()
+            .min(8, "Password must be at least 8 characters")
+            .max(128, "Password must be at most 128 characters"),
+        confirmPassword: z.string().min(1, "Confirm your new password"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
+
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
+export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>;
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;

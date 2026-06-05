@@ -45,5 +45,33 @@ export const loginSchema = z.object({
         ),
 });
 
+export const forgotPasswordSchema = z.object({
+    body: z.object({
+        email: z.email("Enter a valid email address").toLowerCase(),
+    }),
+});
+
+export const verifyResetPasswordTokenSchema = z.object({
+    params: z.object({
+        token: z.string().regex(/^[a-f0-9]{64}$/, "Invalid reset token"),
+    }),
+});
+
+export const resetPasswordSchema = z.object({
+    body: z.object({
+        token: z.string().regex(/^[a-f0-9]{64}$/, "Invalid reset token"),
+        newPassword: z
+            .string()
+            .min(8, "Password must be at least 8 characters")
+            .max(128, "Password must be at most 128 characters"),
+    }),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
 export type LoginInput = z.infer<typeof loginSchema>["body"];
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>["body"];
+export type VerifyResetPasswordTokenInput = z.infer<
+    typeof verifyResetPasswordTokenSchema
+>["params"];
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>["body"];

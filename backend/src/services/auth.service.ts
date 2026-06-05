@@ -1,8 +1,19 @@
 import bcrypt from "bcryptjs";
 import { AppError } from "../middlewares/error.middleware.js";
-import { UserModel } from "../models/user.model.js";
-import type { LoginInput, RegisterInput } from "../schemas/auth.schema.js";
+import { User, UserModel } from "../models/user.model.js";
+import type {
+    ForgotPasswordInput,
+    LoginInput,
+    RegisterInput,
+    ResetPasswordInput,
+    VerifyResetPasswordTokenInput,
+} from "../schemas/auth.schema.js";
 import { generateToken } from "../lib/jwt.js";
+import {
+    generateToken as generateCryptoToken,
+    hashToken,
+} from "../lib/crypto.js";
+import { PasswordResetModel } from "../models/password-reset.js";
 
 export interface AuthUserResponse {
     id: string;
@@ -18,6 +29,15 @@ export interface AuthResult {
 export interface AuthResponseData {
     user: AuthUserResponse;
 }
+
+export interface ForgotPasswordResult {
+    user: User;
+    token: string;
+}
+
+const PASSWORD_RESET_TOKEN_EXPIRY_MS = 15 * 60 * 1000;
+const PASSWORD_RESET_REQUEST_WINDOW_MS = 24 * 60 * 60 * 1000;
+const PASSWORD_RESET_DAILY_LIMIT = 3;
 
 export class AuthService {
     public static async register(input: RegisterInput): Promise<AuthResult> {
@@ -85,5 +105,106 @@ export class AuthService {
             },
             token,
         };
+    }
+
+    public static async forgotPassword(
+        input: ForgotPasswordInput,
+    ): Promise<ForgotPasswordResult | null> {
+        const normalizedEmail = input.email.toLowerCase();
+
+        const existingUser = await UserModel.findOne({
+            email: normalizedEmail,
+        }).lean();
+
+        if (!existingUser) {
+            return null;
+        }
+
+        const now = new Date();
+        const existingReset = await PasswordResetModel.findOne({
+            userId: existingUser._id,
+        });
+
+        const isWithinRequestWindow =
+            existingReset &&
+            now.getTime() - existingReset.requestWindowStartedAt.getTime() <
+                PASSWORD_RESET_REQUEST_WINDOW_MS;
+
+        if (
+            isWithinRequestWindow &&
+            existingReset.requestCount >= PASSWORD_RESET_DAILY_LIMIT
+        ) {
+            throw new AppError(
+                "Password reset request limit reached. Please try again later.",
+                429,
+            );
+        }
+
+        const requestCount = isWithinRequestWindow
+            ? existingReset.requestCount + 1
+            : 1;
+        const requestWindowStartedAt = isWithinRequestWindow
+            ? existingReset.requestWindowStartedAt
+            : now;
+        const resetPasswordToken = generateCryptoToken();
+        const resetPasswordTokenHash = hashToken(resetPasswordToken);
+        const tokenExpiresAt = new Date(
+            now.getTime() + PASSWORD_RESET_TOKEN_EXPIRY_MS,
+        );
+
+        await PasswordResetModel.findOneAndUpdate(
+            { userId: existingUser._id },
+            {
+                tokenHash: resetPasswordTokenHash,
+                tokenExpiresAt,
+                requestCount,
+                requestWindowStartedAt,
+                createdAt: requestWindowStartedAt,
+            },
+            {
+                new: true,
+                setDefaultsOnInsert: true,
+                upsert: true,
+            },
+        );
+
+        return { user: existingUser, token: resetPasswordToken };
+    }
+
+    public static async verifyResetPasswordToken(
+        input: VerifyResetPasswordTokenInput,
+    ): Promise<boolean> {
+        const resetPasswordTokenHash = hashToken(input.token);
+
+        const resetTokenExists = await PasswordResetModel.findOne({
+            tokenHash: resetPasswordTokenHash,
+            tokenExpiresAt: { $gt: new Date() },
+        });
+
+        return resetTokenExists !== null;
+    }
+
+    public static async resetPassword(input: ResetPasswordInput): Promise<void> {
+        const resetPasswordTokenHash = hashToken(input.token);
+        const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+
+        const passwordReset = await PasswordResetModel.findOneAndDelete({
+            tokenHash: resetPasswordTokenHash,
+            tokenExpiresAt: { $gt: new Date() },
+        });
+
+        if (!passwordReset) {
+            throw new AppError("Reset password link has expired", 400);
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            passwordReset.userId,
+            { password: hashedPassword },
+            { runValidators: true },
+        );
+
+        if (!updatedUser) {
+            throw new AppError("Unable to reset password", 400);
+        }
     }
 }
