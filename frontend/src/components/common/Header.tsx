@@ -51,7 +51,7 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-30 pb-2 border-b border-border-divider bg-primary-background/95 backdrop-blur">
+        <header className="sticky top-0 z-30 py-2 border-b border-border-divider bg-primary-background/95 backdrop-blur">
             <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex min-w-0 items-center gap-4">
                     <Logo />
