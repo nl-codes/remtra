@@ -135,3 +135,17 @@ export const logout = asyncHandler(
         res.status(200).json(response);
     },
 );
+
+export const getSession = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const user = await AuthService.getAuthenticatedUser(req.user!.userId);
+
+        const response: ApiResponse<AuthResponseData> = {
+            success: true,
+            message: "Authenticated session",
+            data: { user },
+        };
+
+        res.status(200).json(response);
+    },
+);
