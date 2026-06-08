@@ -7,6 +7,7 @@ import { appToast } from "../../lib/toast";
 import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
+import { useAuth } from "../../hooks/useAuth";
 
 const getLogoutErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
@@ -20,6 +21,7 @@ const getLogoutErrorMessage = (error: unknown): string => {
 
 export default function Header() {
     const navigate = useNavigate();
+    const { clearAuth } = useAuth();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleLogout = async (): Promise<void> => {
@@ -32,9 +34,16 @@ export default function Header() {
         try {
             const response = await logoutUser();
 
+            clearAuth();
             appToast.success(response.message);
             navigate(routes.login, { replace: true });
         } catch (error) {
+            if (error instanceof AxiosError && error.response?.status === 401) {
+                clearAuth();
+                navigate(routes.login, { replace: true });
+                return;
+            }
+
             appToast.error(getLogoutErrorMessage(error));
         } finally {
             setIsLoggingOut(false);
