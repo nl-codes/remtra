@@ -61,3 +61,9 @@ export const resetPassword = async (
 
     return response.data;
 };
+
+export const logoutUser = async (): Promise<ApiResponse<void>> => {
+    const response = await api.post<ApiResponse<void>>("/auth/logout");
+
+    return response.data;
+};
