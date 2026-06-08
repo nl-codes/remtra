@@ -10,10 +10,11 @@ import { registerUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import type { RegisterResponse } from "../../types/auth";
 import FormInput from "./FormInput";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
 import { appToast } from "../../lib/toast";
 import { useAuth } from "../../hooks/useAuth";
+import Button, { ButtonLink } from "../common/Button";
 
 type RegisterField = keyof RegisterFormValues;
 type FormErrors = Partial<Record<RegisterField, string>>;
@@ -150,21 +151,24 @@ function RegisterForm() {
                     onChange={handleChange}
                     placeholder="At least 8 characters"
                     trailingAction={
-                        <button
+                        <Button
                             aria-label={
                                 showPassword ? "Hide password" : "Show password"
                             }
-                            className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-text-muted transition hover:bg-secondary-surface hover:text-text-primary"
+                            className="absolute right-2 top-1/2 -translate-y-1/2"
+                            icon={
+                                showPassword ? (
+                                    <EyeOff aria-hidden="true" />
+                                ) : (
+                                    <Eye aria-hidden="true" />
+                                )
+                            }
+                            iconOnly
                             onClick={() =>
                                 setShowPassword((currentValue) => !currentValue)
                             }
-                            type="button">
-                            {showPassword ? (
-                                <EyeOff aria-hidden="true" size={18} />
-                            ) : (
-                                <Eye aria-hidden="true" size={18} />
-                            )}
-                        </button>
+                            variant="tertiary"
+                        />
                     }
                     type={showPassword ? "text" : "password"}
                     value={formValues.password}
@@ -176,25 +180,25 @@ function RegisterForm() {
                     </div>
                 ) : null}
 
-                <button
-                    className="flex h-11 w-full items-center justify-center rounded-md bg-action px-4 text-sm font-semibold text-primary-background transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-70"
+                <Button
                     disabled={isSubmitting}
+                    fullWidth
+                    icon={
+                        isSubmitting ? (
+                            <Loader2
+                                aria-hidden="true"
+                                className="animate-spin"
+                            />
+                        ) : undefined
+                    }
                     type="submit">
-                    {isSubmitting ? (
-                        <Loader2
-                            aria-hidden="true"
-                            className="animate-spin"
-                            size={18}
-                        />
-                    ) : (
-                        "Create account"
-                    )}
-                </button>
-                <p className="text-center text-text-muted underline">
-                    <Link to={routes.login} replace>
+                    {isSubmitting ? "Creating account..." : "Create account"}
+                </Button>
+                <div className="flex justify-center">
+                    <ButtonLink replace to={routes.login} variant="tertiary">
                         Log in to existing account
-                    </Link>
-                </p>
+                    </ButtonLink>
+                </div>
             </form>
         </div>
     );
