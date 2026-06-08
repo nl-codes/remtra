@@ -13,6 +13,7 @@ import FormInput from "./FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
 import { appToast } from "../../lib/toast";
+import { useAuth } from "../../hooks/useAuth";
 
 type LoginField = keyof LoginFormValues;
 type FormErrors = Partial<Record<LoginField, string>>;
@@ -55,6 +56,7 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
+    const { setAuthenticated } = useAuth();
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
@@ -87,6 +89,7 @@ export default function LoginForm() {
             const response = await loginUser(parsedForm.data);
 
             if (response.data) {
+                setAuthenticated(response.data.user);
                 appToast.success("Logged in successfully");
                 navigate(routes.dashboard, { replace: true });
             }

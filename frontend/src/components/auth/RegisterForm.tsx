@@ -13,6 +13,7 @@ import FormInput from "./FormInput";
 import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
 import { appToast } from "../../lib/toast";
+import { useAuth } from "../../hooks/useAuth";
 
 type RegisterField = keyof RegisterFormValues;
 type FormErrors = Partial<Record<RegisterField, string>>;
@@ -59,6 +60,7 @@ function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
+    const { setAuthenticated } = useAuth();
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = event.target;
@@ -91,6 +93,7 @@ function RegisterForm() {
             const response = await registerUser(parsedForm.data);
 
             if (response.data) {
+                setAuthenticated(response.data.user);
                 setFormValues(initialFormValues);
                 appToast.success("Account created successfully");
                 navigate(routes.dashboard, { replace: true });
