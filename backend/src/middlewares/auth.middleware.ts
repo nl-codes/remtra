@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { AppError } from "./error.middleware.js";
 import { env } from "../config/env.config.js";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "../lib/jwt.js";
+import type { JwtPayload } from "../lib/jwt.js";
 
 export const requireAuth = (
     req: Request,
