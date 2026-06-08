@@ -7,6 +7,9 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { RootLayout } from "./components/layout/RootLayout";
 import DashboardPage from "./pages/DashboardPage";
+import GuestOnlyRoute from "./components/routing/GuestOnlyRoute";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
+import SharedRoute from "./components/routing/SharedRoute";
 
 function App() {
     return (
@@ -14,24 +17,32 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={<Navigate to={routes.register} replace />}
-                />
-                <Route path={routes.register} element={<RegisterPage />} />
-                <Route path={routes.login} element={<LoginPage />} />
-                <Route
-                    path={routes.forgotPassword}
-                    element={<ForgotPasswordPage />}
-                />
-                <Route
-                    path={routes.resetPassword}
-                    element={<ResetPasswordPage />}
+                    element={<Navigate to={routes.dashboard} replace />}
                 />
 
-                <Route element={<RootLayout />}>
+                <Route element={<GuestOnlyRoute />}>
+                    <Route path={routes.register} element={<RegisterPage />} />
+                    <Route path={routes.login} element={<LoginPage />} />
                     <Route
-                        path={routes.dashboard}
-                        element={<DashboardPage />}
+                        path={routes.forgotPassword}
+                        element={<ForgotPasswordPage />}
                     />
+                </Route>
+
+                <Route element={<SharedRoute />}>
+                    <Route
+                        path={routes.resetPassword}
+                        element={<ResetPasswordPage />}
+                    />
+                </Route>
+
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<RootLayout />}>
+                        <Route
+                            path={routes.dashboard}
+                            element={<DashboardPage />}
+                        />
+                    </Route>
                 </Route>
             </Routes>
             <ToastProvider />
