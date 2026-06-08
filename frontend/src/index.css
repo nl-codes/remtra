@@ -21,7 +21,7 @@ html {
 }
 
 body {
-    margin: 0;
+    margin: 12px 12px 0 12px;
     min-width: 320px;
     min-height: 100vh;
     background: var(--color-primary-background);
