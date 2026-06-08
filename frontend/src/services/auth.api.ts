@@ -61,3 +61,16 @@ export const resetPassword = async (
 
     return response.data;
 };
+
+export const logoutUser = async (): Promise<ApiResponse<void>> => {
+    const response = await api.post<ApiResponse<void>>("/auth/logout");
+
+    return response.data;
+};
+
+export const getAuthSession = async (): Promise<ApiResponse<LoginResponse>> => {
+    const response =
+        await api.get<ApiResponse<LoginResponse>>("/auth/session");
+
+    return response.data;
+};

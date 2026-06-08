@@ -122,3 +122,30 @@ export const resetPassword = asyncHandler(
         res.status(200).json(response);
     },
 );
+
+export const logout = asyncHandler(
+    async (_req: Request, res: Response): Promise<void> => {
+        res.clearCookie("accessToken", accessTokenCookieOptions());
+
+        const response: ApiResponse<void> = {
+            success: true,
+            message: "Logged out successfully",
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const getSession = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const user = await AuthService.getAuthenticatedUser(req.user!.userId);
+
+        const response: ApiResponse<AuthResponseData> = {
+            success: true,
+            message: "Authenticated session",
+            data: { user },
+        };
+
+        res.status(200).json(response);
+    },
+);

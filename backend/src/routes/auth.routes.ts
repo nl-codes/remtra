@@ -5,8 +5,11 @@ import {
     forgotPassword,
     verifyResetPasswordToken,
     resetPassword,
+    logout,
+    getSession,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/zod.middleware.js";
+import { requireAuth } from "../middlewares/auth.middleware.js";
 import {
     registerSchema,
     loginSchema,
@@ -17,9 +20,9 @@ import {
 
 const router = Router();
 
+// Public Routes (no Authorization required)
 router.post("/register", validate(registerSchema), register);
 router.post("/login", validate(loginSchema), login);
-
 router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 router.get(
     "/validate-reset-password-token/:token",
@@ -28,4 +31,7 @@ router.get(
 );
 router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
+// Protected Routes (Authorization required)
+router.get("/session", requireAuth, getSession);
+router.post("/logout", requireAuth, logout);
 export default router;
