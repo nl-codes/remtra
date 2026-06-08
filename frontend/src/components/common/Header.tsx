@@ -8,6 +8,7 @@ import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
 import { useAuth } from "../../hooks/useAuth";
+import Button from "./Button";
 
 const getLogoutErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
@@ -65,26 +66,26 @@ export default function Header() {
                     </div>
                 </div>
 
-                <button
+                <Button
                     aria-label="Log out"
-                    className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-md border border-border-divider bg-secondary-surface px-3 text-sm font-medium text-text-muted transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={isLoggingOut}
+                    icon={
+                        isLoggingOut ? (
+                            <Loader2
+                                aria-hidden="true"
+                                className="animate-spin"
+                            />
+                        ) : (
+                            <LogOut aria-hidden="true" />
+                        )
+                    }
                     onClick={handleLogout}
                     title="Log out"
-                    type="button">
-                    {isLoggingOut ? (
-                        <Loader2
-                            aria-hidden="true"
-                            className="animate-spin"
-                            size={18}
-                        />
-                    ) : (
-                        <LogOut aria-hidden="true" size={18} />
-                    )}
+                    variant="secondary">
                     <span className="hidden sm:inline">
                         {isLoggingOut ? "Logging out..." : "Log out"}
                     </span>
-                </button>
+                </Button>
             </div>
         </header>
     );
