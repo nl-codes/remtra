@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.png";
+import { routes } from "../../constants/routes";
 
 export default function Logo() {
     return (
         <Link
-            to="/"
+            to={routes.dashboard}
             className="inline-block transition-opacity hover:opacity-80">
             <img
                 src={logo}
