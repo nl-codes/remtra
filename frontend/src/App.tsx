@@ -5,6 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import ToastProvider from "./components/common/ToastProvider";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import { RootLayout } from "./components/layout/RootLayout";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
     return (
@@ -24,6 +26,13 @@ function App() {
                     path={routes.resetPassword}
                     element={<ResetPasswordPage />}
                 />
+
+                <Route element={<RootLayout />}>
+                    <Route
+                        path={routes.dashboard}
+                        element={<DashboardPage />}
+                    />
+                </Route>
             </Routes>
             <ToastProvider />
         </>
