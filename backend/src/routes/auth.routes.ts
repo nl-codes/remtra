@@ -22,7 +22,10 @@ const router = Router();
 
 // Public Routes (no Authorization required)
 router.post("/register", validate(registerSchema), register);
+
 router.post("/login", validate(loginSchema), login);
+router.post("/logout", logout);
+
 router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 router.get(
     "/validate-reset-password-token/:token",
@@ -33,5 +36,4 @@ router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 // Protected Routes (Authorization required)
 router.get("/session", requireAuth, getSession);
-router.post("/logout", requireAuth, logout);
 export default router;
