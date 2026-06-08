@@ -40,6 +40,22 @@ const PASSWORD_RESET_REQUEST_WINDOW_MS = 24 * 60 * 60 * 1000;
 const PASSWORD_RESET_DAILY_LIMIT = 3;
 
 export class AuthService {
+    public static async getAuthenticatedUser(
+        userId: string,
+    ): Promise<AuthUserResponse> {
+        const user = await UserModel.findById(userId).lean();
+
+        if (!user) {
+            throw new AppError("Authentication failed", 401);
+        }
+
+        return {
+            id: user._id.toString(),
+            username: user.username,
+            email: user.email,
+        };
+    }
+
     public static async register(input: RegisterInput): Promise<AuthResult> {
         const normalizedEmail = input.email.toLowerCase();
         const normalizedUsername = input.username.trim();
@@ -184,7 +200,9 @@ export class AuthService {
         return resetTokenExists !== null;
     }
 
-    public static async resetPassword(input: ResetPasswordInput): Promise<void> {
+    public static async resetPassword(
+        input: ResetPasswordInput,
+    ): Promise<void> {
         const resetPasswordTokenHash = hashToken(input.token);
         const hashedPassword = await bcrypt.hash(input.newPassword, 10);
 
