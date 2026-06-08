@@ -6,6 +6,7 @@ import {
     verifyResetPasswordToken,
     resetPassword,
     logout,
+    getSession,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/zod.middleware.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
@@ -31,5 +32,6 @@ router.get(
 router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 // Protected Routes (Authorization required)
+router.get("/session", requireAuth, getSession);
 router.post("/logout", requireAuth, logout);
 export default router;
