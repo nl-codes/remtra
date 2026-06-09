@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Link, type LinkProps } from "react-router-dom";
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary";
+export type ButtonVariant = "primary" | "secondary" | "tertiary" | "danger";
 
 interface ButtonStyleProps {
     variant?: ButtonVariant;
@@ -27,6 +27,7 @@ const variantClasses: Record<ButtonVariant, string> = {
         "rounded-md bg-transparent text-action hover:text-accent disabled:text-action-disabled disabled:hover:text-action-disabled",
     tertiary:
         "rounded-none bg-transparent text-action underline decoration-current underline-offset-4 hover:text-accent disabled:text-action-disabled disabled:hover:text-action-disabled",
+    danger: "rounded-md bg-red-800 text-white hover:bg-red-700 disabled:bg-red-950 disabled:text-red-300",
 };
 
 const getButtonClasses = ({
