@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { CircleUserRound, Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
@@ -8,7 +8,8 @@ import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
 import { useAuth } from "../../hooks/useAuth";
-import Button, { ButtonLink } from "./Button";
+import Button from "./Button";
+import ProfileAvatarButton from "../profile/ProfileAvatarButton";
 
 const getLogoutErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
@@ -67,15 +68,7 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <ButtonLink
-                        aria-label="View profile"
-                        border={false}
-                        icon={<CircleUserRound aria-hidden="true" />}
-                        iconOnly
-                        title="View profile"
-                        to={routes.profile}
-                        variant="secondary"
-                    />
+                    <ProfileAvatarButton />
                     <Button
                         aria-label="Log out"
                         disabled={isLoggingOut}
