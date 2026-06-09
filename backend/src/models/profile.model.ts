@@ -2,6 +2,7 @@ import {
     model,
     Schema,
     Types,
+    type HydratedDocument,
     type Model,
 } from "mongoose";
 
@@ -14,6 +15,8 @@ export interface Profile {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type ProfileDocument = HydratedDocument<Profile>;
 
 const profileSchema = new Schema<Profile>(
     {
