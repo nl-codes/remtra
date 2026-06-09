@@ -1,6 +1,9 @@
 import type { JwtPayload } from "../lib/jwt.js";
 import { AppError } from "../middlewares/error.middleware.js";
-import { ProfileModel } from "../models/profile.model.js";
+import {
+    ProfileModel,
+    type ProfileDocument,
+} from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
 import type { RegisterProfileInput } from "../schemas/profile.schema.js";
 
@@ -12,6 +15,17 @@ const isDuplicateKeyError = (error: unknown): error is { code: number } => {
         error.code === 11000
     );
 };
+
+const toProfileResponse = (profile: ProfileDocument): ProfileResponse => ({
+    id: profile._id.toString(),
+    userId: profile.userId.toString(),
+    pictureUrl: profile.pictureUrl,
+    bio: profile.bio,
+    gender: profile.gender,
+    country: profile.country,
+    createdAt: profile.createdAt,
+    updatedAt: profile.updatedAt,
+});
 
 export interface ProfileResponse {
     id: string;
@@ -49,16 +63,7 @@ export class ProfileService {
                 ...input,
             });
 
-            return {
-                id: profile._id.toString(),
-                userId: profile.userId.toString(),
-                pictureUrl: profile.pictureUrl,
-                bio: profile.bio,
-                gender: profile.gender,
-                country: profile.country,
-                createdAt: profile.createdAt,
-                updatedAt: profile.updatedAt,
-            };
+            return toProfileResponse(profile);
         } catch (error) {
             if (isDuplicateKeyError(error)) {
                 throw new AppError("Profile already exists", 409);
@@ -66,5 +71,17 @@ export class ProfileService {
 
             throw error;
         }
+    }
+
+    public static async getProfileByUserId(
+        userId: string,
+    ): Promise<ProfileResponse> {
+        const profile = await ProfileModel.findOne({ userId });
+
+        if (!profile) {
+            throw new AppError("Profile not found", 404);
+        }
+
+        return toProfileResponse(profile);
     }
 }
