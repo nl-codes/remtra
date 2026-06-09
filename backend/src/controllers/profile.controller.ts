@@ -3,16 +3,19 @@ import { asyncHandler } from "../lib/async-handler.js";
 import {
     getValidatedBody,
     getValidatedParams,
+    getValidatedQuery,
 } from "../lib/validated-request.js";
 import type {
     GetProfileParams,
     RegisterProfileInput,
+    SearchProfilesQuery,
     UpdateProfileInput,
-    UpdateProfileParams,
+    UpdateProfilePictureInput,
 } from "../schemas/profile.schema.js";
 import type { ApiResponse } from "../types/api-response.js";
 import {
     type ProfileResponse,
+    type ProfileSearchResult,
     ProfileService,
 } from "../services/profile.service.js";
 import { AppError } from "../middlewares/error.middleware.js";
@@ -83,13 +86,8 @@ export const updateProfile = asyncHandler(
             throw new AppError("Authentication required", 401);
         }
 
-        const params = getValidatedParams<UpdateProfileParams>(req);
         const body = getValidatedBody<UpdateProfileInput>(req);
-        const profile = await ProfileService.updateProfile(
-            initiator,
-            params.userId,
-            body,
-        );
+        const profile = await ProfileService.updateProfile(initiator, body);
 
         const response: ApiResponse<ProfileResponse> = {
             success: true,
@@ -109,13 +107,53 @@ export const deleteProfile = asyncHandler(
             throw new AppError("Authentication required", 401);
         }
 
-        const params = getValidatedParams<GetProfileParams>(req);
-
-        await ProfileService.deleteProfile(initiator, params.userId);
+        await ProfileService.deleteProfile(initiator);
 
         const response: ApiResponse<void> = {
             success: true,
             message: "Profile deleted successfully",
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const updateProfilePicture = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const initiator = req.user;
+
+        if (!initiator) {
+            throw new AppError("Authentication required", 401);
+        }
+
+        const body = getValidatedBody<UpdateProfilePictureInput>(req);
+        const profile = await ProfileService.updateProfilePicture(
+            initiator,
+            body,
+        );
+
+        const response: ApiResponse<ProfileResponse> = {
+            success: true,
+            message:
+                body.pictureUrl === null
+                    ? "Profile picture removed successfully"
+                    : "Profile picture updated successfully",
+            data: profile,
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const searchProfiles = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const query = getValidatedQuery<SearchProfilesQuery>(req);
+        const result = await ProfileService.searchProfiles(query);
+
+        const response: ApiResponse<ProfileSearchResult> = {
+            success: true,
+            message: "Profiles retrieved successfully",
+            data: result,
         };
 
         res.status(200).json(response);
