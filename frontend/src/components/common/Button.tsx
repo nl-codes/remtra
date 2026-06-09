@@ -8,6 +8,7 @@ interface ButtonStyleProps {
     icon?: ReactNode;
     fullWidth?: boolean;
     iconOnly?: boolean;
+    border?: boolean;
 }
 
 interface ButtonProps
@@ -15,7 +16,7 @@ interface ButtonProps
 
 interface ButtonLinkProps
     extends Omit<LinkProps, "children" | "className">, ButtonStyleProps {
-    children: ReactNode;
+    children?: ReactNode;
     className?: string;
 }
 
@@ -23,17 +24,20 @@ const variantClasses: Record<ButtonVariant, string> = {
     primary:
         "rounded-md bg-action text-primary-background hover:bg-accent disabled:bg-action-disabled disabled:text-primary-background disabled:hover:bg-action-disabled",
     secondary:
-        "rounded-md border border-action bg-transparent text-action hover:border-accent hover:text-accent disabled:border-action-disabled disabled:text-action-disabled disabled:hover:border-action-disabled disabled:hover:text-action-disabled",
+        "rounded-md bg-transparent text-action hover:text-accent disabled:text-action-disabled disabled:hover:text-action-disabled",
     tertiary:
         "rounded-none bg-transparent text-action underline decoration-current underline-offset-4 hover:text-accent disabled:text-action-disabled disabled:hover:text-action-disabled",
 };
 
 const getButtonClasses = ({
     className,
+    border,
     fullWidth,
     iconOnly,
     variant,
-}: Required<Pick<ButtonStyleProps, "fullWidth" | "iconOnly" | "variant">> & {
+}: Required<
+    Pick<ButtonStyleProps, "border" | "fullWidth" | "iconOnly" | "variant">
+> & {
     className: string;
 }): string => {
     return [
@@ -45,6 +49,9 @@ const getButtonClasses = ({
             : fullWidth
               ? "w-full px-3"
               : "w-fit px-3",
+        variant === "secondary" && border
+            ? "border border-action hover:border-accent disabled:border-action-disabled disabled:hover:border-action-disabled"
+            : "",
         variantClasses[variant],
         className,
     ].join(" ");
@@ -67,6 +74,7 @@ const ButtonContent = ({
 );
 
 export default function Button({
+    border = true,
     children,
     className = "",
     disabled,
@@ -80,6 +88,7 @@ export default function Button({
     return (
         <button
             className={getButtonClasses({
+                border,
                 className,
                 fullWidth,
                 iconOnly,
@@ -94,6 +103,7 @@ export default function Button({
 }
 
 export function ButtonLink({
+    border = true,
     children,
     className = "",
     fullWidth = false,
@@ -105,6 +115,7 @@ export function ButtonLink({
     return (
         <Link
             className={getButtonClasses({
+                border,
                 className,
                 fullWidth,
                 iconOnly,
