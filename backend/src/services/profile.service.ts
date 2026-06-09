@@ -5,7 +5,10 @@ import {
     type ProfileDocument,
 } from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
-import type { RegisterProfileInput } from "../schemas/profile.schema.js";
+import type {
+    RegisterProfileInput,
+    UpdateProfileInput,
+} from "../schemas/profile.schema.js";
 
 const isDuplicateKeyError = (error: unknown): error is { code: number } => {
     return (
@@ -77,6 +80,31 @@ export class ProfileService {
         userId: string,
     ): Promise<ProfileResponse> {
         const profile = await ProfileModel.findOne({ userId });
+
+        if (!profile) {
+            throw new AppError("Profile not found", 404);
+        }
+
+        return toProfileResponse(profile);
+    }
+
+    public static async updateProfile(
+        requester: JwtPayload,
+        profileOwnerId: string,
+        input: UpdateProfileInput,
+    ): Promise<ProfileResponse> {
+        if (requester.userId.toLowerCase() !== profileOwnerId) {
+            throw new AppError("You can only update your own profile", 403);
+        }
+
+        const profile = await ProfileModel.findOneAndUpdate(
+            { userId: profileOwnerId },
+            { $set: input },
+            {
+                new: true,
+                runValidators: true,
+            },
+        );
 
         if (!profile) {
             throw new AppError("Profile not found", 404);
