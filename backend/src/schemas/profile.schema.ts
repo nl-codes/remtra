@@ -14,6 +14,30 @@ const optionalProfileField = <TSchema extends z.ZodType<string>>(
     }, schema.optional());
 };
 
+const updateProfileField = <TSchema extends z.ZodType<string>>(
+    schema: TSchema,
+) => {
+    return z.preprocess(
+        (value) => {
+            if (typeof value !== "string") {
+                return value;
+            }
+
+            const trimmedValue = value.trim();
+            return trimmedValue === "" ? null : trimmedValue;
+        },
+        z.union([schema, z.null()]).optional(),
+    );
+};
+
+const genderSchema = z
+    .string()
+    .refine(
+        (value): value is (typeof PROFILE_GENDERS)[number] =>
+            PROFILE_GENDERS.some((gender) => gender === value),
+        "Gender must be male, female, or others",
+    );
+
 const profileDetailsSchema = z.object({
     firstName: optionalProfileField(
         z.string().max(50, "First name must be at most 50 characters"),
@@ -24,12 +48,24 @@ const profileDetailsSchema = z.object({
     bio: optionalProfileField(
         z.string().max(500, "Bio must be at most 500 characters"),
     ),
-    gender: optionalProfileField(
-        z.enum(PROFILE_GENDERS, {
-            error: "Gender must be male, female, or others",
-        }),
-    ),
+    gender: optionalProfileField(genderSchema),
     country: optionalProfileField(
+        z.string().max(64, "Country must be at most 64 characters"),
+    ),
+});
+
+const updateProfileDetailsSchema = z.object({
+    firstName: updateProfileField(
+        z.string().max(50, "First name must be at most 50 characters"),
+    ),
+    lastName: updateProfileField(
+        z.string().max(50, "Last name must be at most 50 characters"),
+    ),
+    bio: updateProfileField(
+        z.string().max(500, "Bio must be at most 500 characters"),
+    ),
+    gender: updateProfileField(genderSchema),
+    country: updateProfileField(
         z.string().max(64, "Country must be at most 64 characters"),
     ),
 });
@@ -58,7 +94,7 @@ export const getProfileSchema = z.object({
 });
 
 export const updateProfileSchema = z.object({
-    body: profileDetailsSchema.refine(
+    body: updateProfileDetailsSchema.refine(
         (profileFields) =>
             Object.values(profileFields).some(
                 (fieldValue) => fieldValue !== undefined,
@@ -95,6 +131,4 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>["body"];
 export type UpdateProfilePictureInput = z.infer<
     typeof updateProfilePictureSchema
 >["body"];
-export type SearchProfilesQuery = z.infer<
-    typeof searchProfilesSchema
->["query"];
+export type SearchProfilesQuery = z.infer<typeof searchProfilesSchema>["query"];
