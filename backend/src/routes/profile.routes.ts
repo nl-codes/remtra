@@ -5,11 +5,13 @@ import { requireAuth } from "../middlewares/auth.middleware.js";
 import {
     getProfileSchema,
     registerProfileSchema,
+    updateProfileSchema,
 } from "../schemas/profile.schema.js";
 import {
     getMyProfile,
     getProfileByUserId,
     registerProfile,
+    updateProfile,
 } from "../controllers/profile.controller.js";
 
 const router = Router();
@@ -21,6 +23,12 @@ router.get(
     requireAuth,
     validate(getProfileSchema),
     getProfileByUserId,
+);
+router.patch(
+    "/user/:userId",
+    requireAuth,
+    validate(updateProfileSchema),
+    updateProfile,
 );
 
 export default router;
