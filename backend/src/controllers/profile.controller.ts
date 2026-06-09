@@ -100,3 +100,24 @@ export const updateProfile = asyncHandler(
         res.status(200).json(response);
     },
 );
+
+export const deleteProfile = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const initiator = req.user;
+
+        if (!initiator) {
+            throw new AppError("Authentication required", 401);
+        }
+
+        const params = getValidatedParams<GetProfileParams>(req);
+
+        await ProfileService.deleteProfile(initiator, params.userId);
+
+        const response: ApiResponse<void> = {
+            success: true,
+            message: "Profile deleted successfully",
+        };
+
+        res.status(200).json(response);
+    },
+);
