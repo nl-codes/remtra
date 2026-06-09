@@ -67,14 +67,6 @@ export const resetPasswordSchema = z.object({
     }),
 });
 
-export const deleteEverythingSchema = z.object({
-    body: z.object({
-        confirmation: z.literal("DELETE", {
-            error: 'Type "DELETE" to confirm account deletion',
-        }),
-    }),
-});
-
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
 export type LoginInput = z.infer<typeof loginSchema>["body"];
 
@@ -83,6 +75,3 @@ export type VerifyResetPasswordTokenInput = z.infer<
     typeof verifyResetPasswordTokenSchema
 >["params"];
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>["body"];
-export type DeleteEverythingInput = z.infer<
-    typeof deleteEverythingSchema
->["body"];
