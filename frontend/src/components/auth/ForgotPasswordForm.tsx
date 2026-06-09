@@ -1,7 +1,6 @@
 import { AxiosError } from "axios";
 import { ArrowLeft, CircleCheck, Loader2, Mail } from "lucide-react";
 import { type ChangeEvent, type SubmitEventHandler, useState } from "react";
-import { Link } from "react-router-dom";
 import { routes } from "../../constants/routes";
 import { appToast } from "../../lib/toast";
 import {
@@ -11,6 +10,7 @@ import {
 import { forgotPassword } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import FormInput from "./FormInput";
+import Button, { ButtonLink } from "../common/Button";
 
 const initialFormValues: ForgotPasswordFormValues = {
     email: "",
@@ -122,27 +122,28 @@ export default function ForgotPasswordForm() {
                     </div>
                 ) : null}
 
-                <button
-                    className="flex h-11 w-full items-center justify-center rounded-md bg-action px-4 text-sm font-semibold text-primary-background transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-70"
+                <Button
                     disabled={isSubmitting}
+                    fullWidth
+                    icon={
+                        isSubmitting ? (
+                            <Loader2
+                                aria-hidden="true"
+                                className="animate-spin"
+                            />
+                        ) : undefined
+                    }
                     type="submit">
-                    {isSubmitting ? (
-                        <Loader2
-                            aria-hidden="true"
-                            className="animate-spin"
-                            size={18}
-                        />
-                    ) : (
-                        "Send reset link"
-                    )}
-                </button>
+                    {isSubmitting ? "Sending link..." : "Send reset link"}
+                </Button>
 
-                <Link
-                    className="flex items-center justify-center gap-2 text-sm font-medium text-text-muted transition hover:text-text-primary"
-                    to={routes.login}>
-                    <ArrowLeft aria-hidden="true" size={16} />
+                <ButtonLink
+                    className="mx-auto"
+                    icon={<ArrowLeft aria-hidden="true" />}
+                    to={routes.login}
+                    variant="tertiary">
                     Back to login
-                </Link>
+                </ButtonLink>
             </form>
         </div>
     );

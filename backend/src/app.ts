@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { env } from "./config/env.config.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
 
 const app = express();
 const allowedOrigins = [env.CLIENT_URL, ...env.ADDITIONAL_CLIENT_URLS];
@@ -33,6 +34,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(errorMiddleware);
 

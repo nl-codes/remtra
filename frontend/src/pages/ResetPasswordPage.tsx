@@ -1,11 +1,12 @@
 import { CircleCheck, Clock3, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import AuthBrandPanel from "../components/auth/AuthBrandPanel";
 import ResetPasswordForm from "../components/auth/ResetPasswordForm";
 import Logo from "../components/common/Logo";
 import { routes } from "../constants/routes";
 import { verifyResetPasswordToken } from "../services/auth.api";
+import { ButtonLink } from "../components/common/Button";
 
 type TokenStatus = "verifying" | "valid" | "expired";
 
@@ -64,11 +65,12 @@ export default function ResetPasswordPage() {
                     <p className="mt-3 text-sm leading-6 text-text-muted">
                         {successMessage}
                     </p>
-                    <Link
-                        className="mt-6 flex h-11 w-full items-center justify-center rounded-md bg-action px-4 text-sm font-semibold text-primary-background transition hover:bg-accent"
+                    <ButtonLink
+                        className="mt-6"
+                        fullWidth
                         to={routes.login}>
                         Continue to login
-                    </Link>
+                    </ButtonLink>
                 </div>
             );
         }
@@ -106,11 +108,12 @@ export default function ResetPasswordPage() {
                     <p className="mt-3 text-sm leading-6 text-text-muted">
                         Request a new link to continue resetting your password.
                     </p>
-                    <Link
-                        className="mt-6 flex h-11 w-full items-center justify-center rounded-md bg-action px-4 text-sm font-semibold text-primary-background transition hover:bg-accent"
+                    <ButtonLink
+                        className="mt-6"
+                        fullWidth
                         to={routes.forgotPassword}>
                         Request a new link
-                    </Link>
+                    </ButtonLink>
                 </div>
             );
         }

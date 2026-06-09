@@ -10,6 +10,8 @@ import DashboardPage from "./pages/DashboardPage";
 import GuestOnlyRoute from "./components/routing/GuestOnlyRoute";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
 import SharedRoute from "./components/routing/SharedRoute";
+import ProfilePage from "./pages/ProfilePage";
+import ProfileEditPage from "./pages/ProfileEditPage";
 
 function App() {
     return (
@@ -41,6 +43,14 @@ function App() {
                         <Route
                             path={routes.dashboard}
                             element={<DashboardPage />}
+                        />
+                        <Route
+                            path={routes.profile}
+                            element={<ProfilePage />}
+                        />
+                        <Route
+                            path={routes.editProfile}
+                            element={<ProfileEditPage />}
                         />
                     </Route>
                 </Route>

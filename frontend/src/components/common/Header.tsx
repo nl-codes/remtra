@@ -8,6 +8,8 @@ import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
 import { useAuth } from "../../hooks/useAuth";
+import Button from "./Button";
+import ProfileAvatarButton from "../profile/ProfileAvatarButton";
 
 const getLogoutErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
@@ -51,7 +53,7 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-30 pb-2 border-b border-border-divider bg-primary-background/95 backdrop-blur">
+        <header className="sticky top-0 z-30 py-2 border-b border-border-divider bg-primary-background/95 backdrop-blur">
             <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex min-w-0 items-center gap-4">
                     <Logo />
@@ -65,26 +67,29 @@ export default function Header() {
                     </div>
                 </div>
 
-                <button
-                    aria-label="Log out"
-                    className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-md border border-border-divider bg-secondary-surface px-3 text-sm font-medium text-text-muted transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={isLoggingOut}
-                    onClick={handleLogout}
-                    title="Log out"
-                    type="button">
-                    {isLoggingOut ? (
-                        <Loader2
-                            aria-hidden="true"
-                            className="animate-spin"
-                            size={18}
-                        />
-                    ) : (
-                        <LogOut aria-hidden="true" size={18} />
-                    )}
-                    <span className="hidden sm:inline">
-                        {isLoggingOut ? "Logging out..." : "Log out"}
-                    </span>
-                </button>
+                <div className="flex items-center gap-4">
+                    <ProfileAvatarButton />
+                    <Button
+                        aria-label="Log out"
+                        disabled={isLoggingOut}
+                        icon={
+                            isLoggingOut ? (
+                                <Loader2
+                                    aria-hidden="true"
+                                    className="animate-spin"
+                                />
+                            ) : (
+                                <LogOut aria-hidden="true" />
+                            )
+                        }
+                        onClick={handleLogout}
+                        title="Log out"
+                        variant="secondary">
+                        <span className="hidden sm:inline">
+                            {isLoggingOut ? "Logging out..." : "Log out"}
+                        </span>
+                    </Button>
+                </div>
             </div>
         </header>
     );
