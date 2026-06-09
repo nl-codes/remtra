@@ -1,14 +1,14 @@
 import type { JwtPayload } from "../lib/jwt.js";
 import { AppError } from "../middlewares/error.middleware.js";
-import {
-    ProfileModel,
-    type ProfileDocument,
-} from "../models/profile.model.js";
+import { ProfileModel, type ProfileDocument } from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
 import type {
     RegisterProfileInput,
+    SearchProfilesQuery,
     UpdateProfileInput,
+    UpdateProfilePictureInput,
 } from "../schemas/profile.schema.js";
+import type { ProfileGender } from "../constants/profile.constants.js";
 
 const isDuplicateKeyError = (error: unknown): error is { code: number } => {
     return (
@@ -22,6 +22,8 @@ const isDuplicateKeyError = (error: unknown): error is { code: number } => {
 const toProfileResponse = (profile: ProfileDocument): ProfileResponse => ({
     id: profile._id.toString(),
     userId: profile.userId.toString(),
+    firstName: profile.firstName,
+    lastName: profile.lastName,
     pictureUrl: profile.pictureUrl,
     bio: profile.bio,
     gender: profile.gender,
@@ -33,13 +35,29 @@ const toProfileResponse = (profile: ProfileDocument): ProfileResponse => ({
 export interface ProfileResponse {
     id: string;
     userId: string;
+    firstName?: string;
+    lastName?: string;
     pictureUrl?: string;
     bio?: string;
-    gender?: string;
+    gender?: ProfileGender;
     country?: string;
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface ProfileSearchResult {
+    profiles: ProfileResponse[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
+const escapeRegex = (value: string): string => {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
 
 export class ProfileService {
     public static async registerProfile(
@@ -90,15 +108,10 @@ export class ProfileService {
 
     public static async updateProfile(
         requester: JwtPayload,
-        profileOwnerId: string,
         input: UpdateProfileInput,
     ): Promise<ProfileResponse> {
-        if (requester.userId.toLowerCase() !== profileOwnerId) {
-            throw new AppError("You can only update your own profile", 403);
-        }
-
         const profile = await ProfileModel.findOneAndUpdate(
-            { userId: profileOwnerId },
+            { userId: requester.userId },
             { $set: input },
             {
                 new: true,
@@ -113,20 +126,66 @@ export class ProfileService {
         return toProfileResponse(profile);
     }
 
-    public static async deleteProfile(
-        requester: JwtPayload,
-        profileOwnerId: string,
-    ): Promise<void> {
-        if (requester.userId.toLowerCase() !== profileOwnerId) {
-            throw new AppError("You can only delete your own profile", 403);
-        }
-
+    public static async deleteProfile(requester: JwtPayload): Promise<void> {
         const profile = await ProfileModel.findOneAndDelete({
-            userId: profileOwnerId,
+            userId: requester.userId,
         });
 
         if (!profile) {
             throw new AppError("Profile not found", 404);
         }
+    }
+
+    public static async updateProfilePicture(
+        requester: JwtPayload,
+        input: UpdateProfilePictureInput,
+    ): Promise<ProfileResponse> {
+        const update =
+            input.pictureUrl === null
+                ? { $unset: { pictureUrl: 1 } }
+                : { $set: { pictureUrl: input.pictureUrl } };
+
+        const profile = await ProfileModel.findOneAndUpdate(
+            { userId: requester.userId },
+            update,
+            {
+                new: true,
+                runValidators: true,
+            },
+        );
+
+        if (!profile) {
+            throw new AppError("Profile not found", 404);
+        }
+
+        return toProfileResponse(profile);
+    }
+
+    public static async searchProfiles(
+        query: SearchProfilesQuery,
+    ): Promise<ProfileSearchResult> {
+        const searchPattern = new RegExp(escapeRegex(query.q), "i");
+        const filter = {
+            $or: [{ firstName: searchPattern }, { lastName: searchPattern }],
+        };
+        const skip = (query.page - 1) * query.limit;
+
+        const [profiles, total] = await Promise.all([
+            ProfileModel.find(filter)
+                .sort({ firstName: 1, lastName: 1, _id: 1 })
+                .skip(skip)
+                .limit(query.limit),
+            ProfileModel.countDocuments(filter),
+        ]);
+
+        return {
+            profiles: profiles.map(toProfileResponse),
+            pagination: {
+                page: query.page,
+                limit: query.limit,
+                total,
+                totalPages: Math.ceil(total / query.limit),
+            },
+        };
     }
 }
