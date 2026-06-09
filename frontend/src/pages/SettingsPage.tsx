@@ -6,7 +6,7 @@ import Button from "../components/common/Button";
 import { routes } from "../constants/routes";
 import { useAuth } from "../hooks/useAuth";
 import { appToast } from "../lib/toast";
-import { deleteEverything } from "../services/auth.api";
+import { deleteAccount } from "../services/account.api";
 import type { ApiResponse } from "../types/api";
 
 const confirmationText = "DELETE";
@@ -35,7 +35,7 @@ export default function SettingsPage() {
         setConfirmation(event.target.value);
     };
 
-    const handleDeleteEverything = async (): Promise<void> => {
+    const handleDeleteAccount = async (): Promise<void> => {
         if (!canDelete) {
             return;
         }
@@ -43,7 +43,7 @@ export default function SettingsPage() {
         setIsDeleting(true);
 
         try {
-            const response = await deleteEverything();
+            const response = await deleteAccount();
 
             clearAuth();
             appToast.success(response.message);
@@ -158,7 +158,7 @@ export default function SettingsPage() {
                                                 )
                                             }
                                             onClick={() =>
-                                                void handleDeleteEverything()
+                                                void handleDeleteAccount()
                                             }
                                             variant="danger">
                                             {isDeleting
