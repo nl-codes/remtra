@@ -3,7 +3,7 @@ export type AvatarSize = "extraSmall" | "small" | "medium" | "large";
 interface UserAvatarProps {
     src?: string | null;
     name?: string | null;
-    size?: AvatarSize;
+    size?: AvatarSize | number;
     className?: string;
 }
 
@@ -54,7 +54,7 @@ export default function UserAvatar({
     size = "medium",
     src,
 }: UserAvatarProps) {
-    const pixels = sizePixels[size];
+    const pixels = typeof size === "number" ? size : sizePixels[size];
     const safeName = name?.trim() || "User";
     const safeSource = src?.trim() || null;
 
