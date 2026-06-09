@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PROFILE_GENDERS } from "../constants/profile.constants.js";
 
 const optionalProfileField = <TSchema extends z.ZodType<string>>(
     schema: TSchema,
@@ -23,7 +24,9 @@ const profileFieldsSchema = z.object({
         z.string().max(500, "Bio must be at most 500 characters"),
     ),
     gender: optionalProfileField(
-        z.string().max(8, "Gender must be at most 8 characters"),
+        z.enum(PROFILE_GENDERS, {
+            error: "Gender must be male, female, or others",
+        }),
     ),
     country: optionalProfileField(
         z.string().max(64, "Country must be at most 64 characters"),
