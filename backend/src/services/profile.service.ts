@@ -112,4 +112,21 @@ export class ProfileService {
 
         return toProfileResponse(profile);
     }
+
+    public static async deleteProfile(
+        requester: JwtPayload,
+        profileOwnerId: string,
+    ): Promise<void> {
+        if (requester.userId.toLowerCase() !== profileOwnerId) {
+            throw new AppError("You can only delete your own profile", 403);
+        }
+
+        const profile = await ProfileModel.findOneAndDelete({
+            userId: profileOwnerId,
+        });
+
+        if (!profile) {
+            throw new AppError("Profile not found", 404);
+        }
+    }
 }
