@@ -1,11 +1,5 @@
 import { AxiosError } from "axios";
-import {
-    AlignLeft,
-    Flag,
-    Image,
-    Loader2,
-    UserRound,
-} from "lucide-react";
+import { AlignLeft, Flag, Image, Loader2, UserRound } from "lucide-react";
 import {
     type ChangeEvent,
     type SubmitEventHandler,
@@ -15,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ZodError } from "zod";
 import { routes } from "../../constants/routes";
+import { notifyProfileChanged } from "../../lib/profile-events";
 import { appToast } from "../../lib/toast";
 import {
     profileFormSchema,
@@ -34,7 +29,7 @@ import type {
 } from "../../types/profile";
 import FormInput from "../auth/FormInput";
 import Button, { ButtonLink } from "../common/Button";
-import ProfileAvatar from "./ProfileAvatar";
+import UserAvatar from "./UserAvatar";
 
 type ProfileField = keyof ProfileFormValues;
 type FormErrors = Partial<Record<ProfileField, string>>;
@@ -122,9 +117,8 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
     const isEditing = Boolean(profile);
 
     const displayName =
-        [formValues.firstName, formValues.lastName]
-            .filter(Boolean)
-            .join(" ") || "Your profile";
+        [formValues.firstName, formValues.lastName].filter(Boolean).join(" ") ||
+        "Your profile";
 
     const handleChange = (
         event: ChangeEvent<
@@ -164,6 +158,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                     compactProfilePayload(parsedForm.data),
                 );
 
+                notifyProfileChanged();
                 appToast.success(response.message);
                 navigate(routes.profile, { replace: true });
                 return;
@@ -172,13 +167,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
             const details = compactProfileDetails(parsedForm.data);
 
             const detailsChanged = (
-                [
-                    "firstName",
-                    "lastName",
-                    "bio",
-                    "gender",
-                    "country",
-                ] as const
+                ["firstName", "lastName", "bio", "gender", "country"] as const
             ).some(
                 (field) =>
                     (parsedForm.data[field] || undefined) !== profile[field],
@@ -203,6 +192,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 });
             }
 
+            notifyProfileChanged();
             appToast.success("Profile updated successfully");
             navigate(routes.profile, { replace: true });
         } catch (error) {
@@ -218,9 +208,11 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
     return (
         <form className="space-y-6" noValidate onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4 border-b border-border-divider pb-6 sm:flex-row sm:items-center">
-                <ProfileAvatar
+                <UserAvatar
+                    className="ring-1 ring-border-divider"
                     name={displayName}
-                    pictureUrl={formValues.pictureUrl || undefined}
+                    size="large"
+                    src={formValues.pictureUrl || undefined}
                 />
                 <div>
                     <h2 className="text-lg font-semibold text-text-primary">
