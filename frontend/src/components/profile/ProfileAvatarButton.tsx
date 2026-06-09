@@ -75,12 +75,12 @@ export default function ProfileAvatarButton() {
     return (
         <Link
             aria-label="View profile"
-            className="inline-flex items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary-background"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary-background"
             title="View profile"
             to={routes.profile}>
             <UserAvatar
                 name={displayName}
-                size="medium"
+                size={48}
                 src={profile?.pictureUrl}
             />
         </Link>
