@@ -8,6 +8,7 @@ import {
     updateProfileSchema,
 } from "../schemas/profile.schema.js";
 import {
+    deleteProfile,
     getMyProfile,
     getProfileByUserId,
     registerProfile,
@@ -29,6 +30,12 @@ router.patch(
     requireAuth,
     validate(updateProfileSchema),
     updateProfile,
+);
+router.delete(
+    "/user/:userId",
+    requireAuth,
+    validate(getProfileSchema),
+    deleteProfile,
 );
 
 export default router;
