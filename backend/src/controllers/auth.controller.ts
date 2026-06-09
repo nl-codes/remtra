@@ -10,6 +10,7 @@ import type {
     RegisterInput,
     ResetPasswordInput,
     VerifyResetPasswordTokenInput,
+    DeleteEverythingInput,
 } from "../schemas/auth.schema.js";
 import {
     AuthService,
@@ -144,6 +145,22 @@ export const getSession = asyncHandler(
             success: true,
             message: "Authenticated session",
             data: { user },
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const deleteEverything = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        getValidatedBody<DeleteEverythingInput>(req);
+        await AuthService.deleteEverything(req.user!.userId);
+
+        res.clearCookie("accessToken", accessTokenCookieOptions());
+
+        const response: ApiResponse<void> = {
+            success: true,
+            message: "Your RemTra account and data were deleted successfully",
         };
 
         res.status(200).json(response);
