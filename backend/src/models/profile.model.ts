@@ -5,12 +5,16 @@ import {
     type HydratedDocument,
     type Model,
 } from "mongoose";
+import {
+    PROFILE_GENDERS,
+    type ProfileGender,
+} from "../constants/profile.constants.js";
 
 export interface Profile {
     userId: Types.ObjectId;
     pictureUrl?: string;
     bio?: string;
-    gender?: string;
+    gender?: ProfileGender;
     country?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -36,6 +40,7 @@ const profileSchema = new Schema<Profile>(
         },
         gender: {
             type: String,
+            enum: PROFILE_GENDERS,
         },
         country: {
             type: String,
