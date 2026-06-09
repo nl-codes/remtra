@@ -12,6 +12,8 @@ import {
 
 export interface Profile {
     userId: Types.ObjectId;
+    firstName?: string;
+    lastName?: string;
     pictureUrl?: string;
     bio?: string;
     gender?: ProfileGender;
@@ -29,6 +31,18 @@ const profileSchema = new Schema<Profile>(
             required: true,
             ref: "User",
             unique: true,
+        },
+        firstName: {
+            type: String,
+            trim: true,
+            maxlength: 50,
+            index: true,
+        },
+        lastName: {
+            type: String,
+            trim: true,
+            maxlength: 50,
+            index: true,
         },
         pictureUrl: {
             type: String,
