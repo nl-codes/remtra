@@ -24,10 +24,13 @@ export interface CreateProfileRequest {
     country?: string;
 }
 
-export type UpdateProfileRequest = Omit<
-    CreateProfileRequest,
-    "pictureUrl"
->;
+export interface UpdateProfileRequest {
+    firstName?: string | null;
+    lastName?: string | null;
+    bio?: string | null;
+    gender?: ProfileGender | null;
+    country?: string | null;
+}
 
 export interface UpdateProfilePictureRequest {
     pictureUrl: string | null;
