@@ -69,8 +69,20 @@ export const logoutUser = async (): Promise<ApiResponse<void>> => {
 };
 
 export const getAuthSession = async (): Promise<ApiResponse<LoginResponse>> => {
-    const response =
-        await api.get<ApiResponse<LoginResponse>>("/auth/session");
+    const response = await api.get<ApiResponse<LoginResponse>>("/auth/session");
+
+    return response.data;
+};
+
+export const deleteEverything = async (): Promise<ApiResponse<void>> => {
+    const response = await api.delete<ApiResponse<void>>(
+        "/auth/delete-everything",
+        {
+            data: {
+                confirmation: "DELETE",
+            },
+        },
+    );
 
     return response.data;
 };
