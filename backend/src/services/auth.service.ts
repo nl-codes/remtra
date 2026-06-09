@@ -14,6 +14,8 @@ import {
     hashToken,
 } from "../lib/crypto.js";
 import { PasswordResetModel } from "../models/password-reset.js";
+import { ProfileModel } from "../models/profile.model.js";
+import mongoose from "mongoose";
 
 export interface AuthUserResponse {
     id: string;
@@ -223,6 +225,28 @@ export class AuthService {
 
         if (!updatedUser) {
             throw new AppError("Unable to reset password", 400);
+        }
+    }
+
+    public static async deleteEverything(userId: string): Promise<void> {
+        const session = await mongoose.startSession();
+
+        try {
+            await session.withTransaction(async () => {
+                await ProfileModel.deleteOne({ userId }).session(session);
+                await PasswordResetModel.deleteMany({ userId }).session(
+                    session,
+                );
+
+                const deletedUser =
+                    await UserModel.findByIdAndDelete(userId).session(session);
+
+                if (!deletedUser) {
+                    throw new AppError("User account not found", 404);
+                }
+            });
+        } finally {
+            await session.endSession();
         }
     }
 }
