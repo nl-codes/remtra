@@ -32,6 +32,13 @@ export const registerProfileSchema = z.object({
     }),
 });
 
+export const getProfileSchema = z.object({
+    params: z.object({
+        userId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid user ID"),
+    }),
+});
+
 export type RegisterProfileInput = z.infer<
     typeof registerProfileSchema
 >["body"];
+export type GetProfileInput = z.infer<typeof getProfileSchema>["params"];
