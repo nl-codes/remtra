@@ -4,12 +4,19 @@ import { PasswordResetModel } from "../models/password-reset.js";
 import { ProfileModel } from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
 
+export interface DeletedAccountContact {
+    username: string;
+    email: string;
+}
+
 export class AccountService {
-    public static async deleteAccount(userId: string): Promise<void> {
+    public static async deleteAccount(
+        userId: string,
+    ): Promise<DeletedAccountContact> {
         const session = await mongoose.startSession();
 
         try {
-            await session.withTransaction(async () => {
+            const deletedAccount = await session.withTransaction(async () => {
                 await ProfileModel.deleteOne({ userId }).session(session);
                 await PasswordResetModel.deleteMany({ userId }).session(
                     session,
@@ -21,7 +28,18 @@ export class AccountService {
                 if (!deletedUser) {
                     throw new AppError("User account not found", 404);
                 }
+
+                return {
+                    username: deletedUser.username,
+                    email: deletedUser.email,
+                };
             });
+
+            if (!deletedAccount) {
+                throw new AppError("Unable to delete user account", 500);
+            }
+
+            return deletedAccount;
         } finally {
             await session.endSession();
         }
