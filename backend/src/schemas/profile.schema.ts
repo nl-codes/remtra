@@ -14,11 +14,12 @@ const optionalProfileField = <TSchema extends z.ZodType<string>>(
     }, schema.optional());
 };
 
-const profileFieldsSchema = z.object({
-    pictureUrl: optionalProfileField(
-        z
-            .url("Enter a valid picture URL")
-            .max(2048, "Picture URL must be at most 2048 characters"),
+const profileDetailsSchema = z.object({
+    firstName: optionalProfileField(
+        z.string().max(50, "First name must be at most 50 characters"),
+    ),
+    lastName: optionalProfileField(
+        z.string().max(50, "Last name must be at most 50 characters"),
     ),
     bio: optionalProfileField(
         z.string().max(500, "Bio must be at most 500 characters"),
@@ -33,6 +34,14 @@ const profileFieldsSchema = z.object({
     ),
 });
 
+const pictureUrlSchema = z
+    .url("Enter a valid picture URL")
+    .max(2048, "Picture URL must be at most 2048 characters");
+
+const createProfileFieldsSchema = profileDetailsSchema.extend({
+    pictureUrl: optionalProfileField(pictureUrlSchema),
+});
+
 const userIdParamsSchema = z.object({
     userId: z
         .string()
@@ -41,7 +50,7 @@ const userIdParamsSchema = z.object({
 });
 
 export const registerProfileSchema = z.object({
-    body: profileFieldsSchema,
+    body: createProfileFieldsSchema,
 });
 
 export const getProfileSchema = z.object({
@@ -49,8 +58,7 @@ export const getProfileSchema = z.object({
 });
 
 export const updateProfileSchema = z.object({
-    params: userIdParamsSchema,
-    body: profileFieldsSchema.refine(
+    body: profileDetailsSchema.refine(
         (profileFields) =>
             Object.values(profileFields).some(
                 (fieldValue) => fieldValue !== undefined,
@@ -61,9 +69,32 @@ export const updateProfileSchema = z.object({
     ),
 });
 
+export const updateProfilePictureSchema = z.object({
+    body: z.object({
+        pictureUrl: z.union([pictureUrlSchema, z.null()]),
+    }),
+});
+
+export const searchProfilesSchema = z.object({
+    query: z.object({
+        q: z
+            .string()
+            .trim()
+            .min(1, "Search query is required")
+            .max(100, "Search query must be at most 100 characters"),
+        page: z.coerce.number().int().min(1).default(1),
+        limit: z.coerce.number().int().min(1).max(50).default(20),
+    }),
+});
+
 export type RegisterProfileInput = z.infer<
     typeof registerProfileSchema
 >["body"];
 export type GetProfileParams = z.infer<typeof getProfileSchema>["params"];
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>["body"];
-export type UpdateProfileParams = z.infer<typeof updateProfileSchema>["params"];
+export type UpdateProfilePictureInput = z.infer<
+    typeof updateProfilePictureSchema
+>["body"];
+export type SearchProfilesQuery = z.infer<
+    typeof searchProfilesSchema
+>["query"];
