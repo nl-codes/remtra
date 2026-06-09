@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut, Settings } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
@@ -8,7 +8,7 @@ import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
 import { useAuth } from "../../hooks/useAuth";
-import Button from "./Button";
+import Button, { ButtonLink } from "./Button";
 import ProfileAvatarButton from "../profile/ProfileAvatarButton";
 
 const getLogoutErrorMessage = (error: unknown): string => {
@@ -68,6 +68,15 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    <ButtonLink
+                        aria-label="Open settings"
+                        border={false}
+                        icon={<Settings aria-hidden="true" />}
+                        iconOnly
+                        title="Settings"
+                        to={routes.settings}
+                        variant="secondary"
+                    />
                     <ProfileAvatarButton />
                     <Button
                         aria-label="Log out"
