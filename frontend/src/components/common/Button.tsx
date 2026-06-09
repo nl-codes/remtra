@@ -42,11 +42,11 @@ const getButtonClasses = ({
     className: string;
 }): string => {
     return [
-        "inline-flex h-8 items-center justify-center gap-1 whitespace-nowrap py-6 text-base font-medium leading-6 transition-colors",
+        "inline-flex h-12 items-center justify-center gap-1 whitespace-nowrap py-0 text-base font-medium leading-6 transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary-background",
         "disabled:cursor-not-allowed",
         iconOnly
-            ? "w-8 px-0 no-underline"
+            ? "w-12 px-0 no-underline"
             : fullWidth
               ? "w-full px-3"
               : "w-fit px-3",

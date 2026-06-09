@@ -86,23 +86,25 @@ const compactProfilePayload = (
     values: ProfileFormValues,
 ): CreateProfileRequest => {
     return {
-        ...compactProfileDetails(values),
+        firstName: values.firstName || undefined,
+        lastName: values.lastName || undefined,
         pictureUrl: values.pictureUrl || undefined,
+        bio: values.bio || undefined,
+        gender:
+            values.gender === "" ? undefined : (values.gender as ProfileGender),
+        country: values.country || undefined,
     };
 };
 
 const compactProfileDetails = (
     values: ProfileFormValues,
 ): UpdateProfileRequest => {
-    const gender =
-        values.gender === "" ? undefined : (values.gender as ProfileGender);
-
     return {
-        firstName: values.firstName || undefined,
-        lastName: values.lastName || undefined,
-        bio: values.bio || undefined,
-        gender,
-        country: values.country || undefined,
+        firstName: values.firstName || null,
+        lastName: values.lastName || null,
+        bio: values.bio || null,
+        gender: values.gender === "" ? null : (values.gender as ProfileGender),
+        country: values.country || null,
     };
 };
 
@@ -170,7 +172,8 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 ["firstName", "lastName", "bio", "gender", "country"] as const
             ).some(
                 (field) =>
-                    (parsedForm.data[field] || undefined) !== profile[field],
+                    (parsedForm.data[field] || null) !==
+                    (profile[field] ?? null),
             );
             const pictureChanged =
                 (parsedForm.data.pictureUrl || undefined) !==
@@ -182,7 +185,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 return;
             }
 
-            if (detailsChanged && Object.values(details).some(Boolean)) {
+            if (detailsChanged) {
                 await updateProfile(details);
             }
 

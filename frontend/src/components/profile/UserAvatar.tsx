@@ -74,6 +74,7 @@ export default function UserAvatar({
 
             {safeSource ? (
                 <img
+                    key={safeSource}
                     alt=""
                     className="absolute inset-0 h-full w-full object-cover"
                     height={pixels}
