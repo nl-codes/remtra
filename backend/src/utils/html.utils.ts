@@ -1,7 +1,22 @@
+const escapeHtml = (value: string): string => {
+    return value.replace(
+        /[&<>"']/g,
+        (character) =>
+            ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+            })[character] ?? character,
+    );
+};
+
 export const getResetPasswordHTML = (
     username: string,
     resetPasswordURL: string,
 ) => {
+    const safeUsername = escapeHtml(username);
     const html = `<!DOCTYPE html>
     <html lang="en">
 
@@ -54,7 +69,7 @@ export const getResetPasswordHTML = (
 
                         <tr>
                             <td style="padding: 0 10px 10px 10px; color: #F8FAFC; font-size: 18px; text-align: left;">
-                                Hi ${username},
+                                Hi ${safeUsername},
                             </td>
                         </tr>
 
@@ -134,6 +149,80 @@ export const getResetPasswordHTML = (
 
     © 2026 RemTra. All rights reserved.
         `.trim();
+
+    return { html, text };
+};
+
+export const getGoodByeHTML = (username: string) => {
+    const safeUsername = escapeHtml(username);
+    const html = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Goodbye from RemTra</title>
+    </head>
+    <body style="background-color: #0F172A; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0"
+            style="background-color: #0F172A; min-height: 100vh;">
+            <tr>
+                <td align="center" valign="top" style="padding: 64px 20px;">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                        style="max-width: 600px;">
+                        <tr>
+                            <td align="center" style="padding-bottom: 28px;">
+                                <img src="https://res.cloudinary.com/duhbs7hqv/image/upload/v1780571330/Logo_peuttw.png"
+                                    alt="RemTra" width="100" height="100"
+                                    style="display: block; width: 100px; height: 100px; border: 0;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" style="padding-bottom: 28px;">
+                                <h1 style="color: #F8FAFC; font-size: 26px; font-weight: 600; margin: 0;">
+                                    Goodbye from RemTra
+                                </h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0 10px 12px; color: #F8FAFC; font-size: 18px;">
+                                Hi ${safeUsername},
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0 10px 20px; color: #CBD5E1; font-size: 17px; line-height: 1.7;">
+                                Your RemTra account and the data associated with it have been permanently deleted.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0 10px 36px; color: #CBD5E1; font-size: 17px; line-height: 1.7;">
+                                Thank you for letting RemTra be part of your journey. We are sorry to see you go, and we wish you all the best with the habits, memories, and moments ahead.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center"
+                                style="border-top: 1px solid #334155; padding-top: 28px; color: #94A3B8; font-size: 14px; line-height: 1.6;">
+                                No further action is required.<br />
+                                &copy; 2026 RemTra. All rights reserved.
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>`;
+
+    const text = `
+Hi ${username},
+
+Your RemTra account and the data associated with it have been permanently deleted.
+
+Thank you for letting RemTra be part of your journey. We are sorry to see you go, and we wish you all the best with the habits, memories, and moments ahead.
+
+No further action is required.
+
+© 2026 RemTra. All rights reserved.
+    `.trim();
 
     return { html, text };
 };
