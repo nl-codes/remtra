@@ -7,7 +7,6 @@ import {
     resetPassword,
     logout,
     getSession,
-    deleteEverything,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/zod.middleware.js";
 import { requireAuth } from "../middlewares/auth.middleware.js";
@@ -17,7 +16,6 @@ import {
     forgotPasswordSchema,
     verifyResetPasswordTokenSchema,
     resetPasswordSchema,
-    deleteEverythingSchema,
 } from "../schemas/auth.schema.js";
 
 const router = Router();
@@ -38,10 +36,4 @@ router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 // Protected Routes (Authorization required)
 router.get("/session", requireAuth, getSession);
-router.delete(
-    "/delete-everything",
-    requireAuth,
-    validate(deleteEverythingSchema),
-    deleteEverything,
-);
 export default router;
