@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/routing/ProtectedRoute";
 import SharedRoute from "./components/routing/SharedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileEditPage from "./pages/ProfileEditPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
     return (
@@ -51,6 +52,10 @@ function App() {
                         <Route
                             path={routes.editProfile}
                             element={<ProfileEditPage />}
+                        />
+                        <Route
+                            path={routes.settings}
+                            element={<SettingsPage />}
                         />
                     </Route>
                 </Route>
