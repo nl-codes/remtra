@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { Loader2, LogOut } from "lucide-react";
+import { CircleUserRound, Loader2, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../constants/routes";
@@ -8,7 +8,7 @@ import { logoutUser } from "../../services/auth.api";
 import type { ApiResponse } from "../../types/api";
 import Logo from "./Logo";
 import { useAuth } from "../../hooks/useAuth";
-import Button from "./Button";
+import Button, { ButtonLink } from "./Button";
 
 const getLogoutErrorMessage = (error: unknown): string => {
     if (error instanceof AxiosError) {
@@ -66,26 +66,37 @@ export default function Header() {
                     </div>
                 </div>
 
-                <Button
-                    aria-label="Log out"
-                    disabled={isLoggingOut}
-                    icon={
-                        isLoggingOut ? (
-                            <Loader2
-                                aria-hidden="true"
-                                className="animate-spin"
-                            />
-                        ) : (
-                            <LogOut aria-hidden="true" />
-                        )
-                    }
-                    onClick={handleLogout}
-                    title="Log out"
-                    variant="secondary">
-                    <span className="hidden sm:inline">
-                        {isLoggingOut ? "Logging out..." : "Log out"}
-                    </span>
-                </Button>
+                <div className="flex items-center gap-2">
+                    <ButtonLink
+                        aria-label="View profile"
+                        border={false}
+                        icon={<CircleUserRound aria-hidden="true" />}
+                        iconOnly
+                        title="View profile"
+                        to={routes.profile}
+                        variant="secondary"
+                    />
+                    <Button
+                        aria-label="Log out"
+                        disabled={isLoggingOut}
+                        icon={
+                            isLoggingOut ? (
+                                <Loader2
+                                    aria-hidden="true"
+                                    className="animate-spin"
+                                />
+                            ) : (
+                                <LogOut aria-hidden="true" />
+                            )
+                        }
+                        onClick={handleLogout}
+                        title="Log out"
+                        variant="secondary">
+                        <span className="hidden sm:inline">
+                            {isLoggingOut ? "Logging out..." : "Log out"}
+                        </span>
+                    </Button>
+                </div>
             </div>
         </header>
     );
