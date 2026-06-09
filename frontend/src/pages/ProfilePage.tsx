@@ -10,12 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { routes } from "../constants/routes";
 import { useAuth } from "../hooks/useAuth";
+import { notifyProfileChanged } from "../lib/profile-events";
 import { appToast } from "../lib/toast";
 import { deleteProfile, getMyProfile } from "../services/profile.api";
 import type { ApiResponse } from "../types/api";
 import type { Profile } from "../types/profile";
 import Button, { ButtonLink } from "../components/common/Button";
-import ProfileAvatar from "../components/profile/ProfileAvatar";
+import UserAvatar from "../components/profile/UserAvatar";
 
 type PageStatus = "loading" | "ready" | "missing" | "error";
 
@@ -114,6 +115,7 @@ export default function ProfilePage() {
             setProfile(null);
             setStatus("missing");
             setShowDeleteConfirmation(false);
+            notifyProfileChanged();
             appToast.success(response.message);
         } catch (error) {
             appToast.error(getApiErrorMessage(error));
@@ -191,9 +193,11 @@ export default function ProfilePage() {
             {status === "ready" && profile ? (
                 <article className="overflow-hidden rounded-lg border border-border-divider bg-secondary-surface">
                     <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-7">
-                        <ProfileAvatar
+                        <UserAvatar
+                            className="ring-1 ring-border-divider"
                             name={displayName}
-                            pictureUrl={profile.pictureUrl}
+                            size="large"
+                            src={profile.pictureUrl}
                         />
                         <div className="min-w-0 flex-1">
                             <h2 className="wrap-break-word text-2xl font-semibold text-text-primary">
