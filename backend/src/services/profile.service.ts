@@ -28,8 +28,8 @@ const toProfileResponse = (profile: ProfileDocument): ProfileResponse => ({
     bio: profile.bio,
     gender: profile.gender,
     country: profile.country,
-    createdAt: profile.createdAt,
-    updatedAt: profile.updatedAt,
+    createdAt: profile.createdAt.toISOString(),
+    updatedAt: profile.updatedAt.toISOString(),
 });
 
 export interface ProfileResponse {
@@ -41,8 +41,8 @@ export interface ProfileResponse {
     bio?: string;
     gender?: ProfileGender;
     country?: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface ProfileSearchResult {
@@ -110,9 +110,29 @@ export class ProfileService {
         requester: JwtPayload,
         input: UpdateProfileInput,
     ): Promise<ProfileResponse> {
+        const fieldsToSet: Record<string, string> = {};
+        const fieldsToUnset: Record<string, 1> = {};
+
+        for (const [field, value] of Object.entries(input)) {
+            if (value === null) {
+                fieldsToUnset[field] = 1;
+            } else if (value !== undefined) {
+                fieldsToSet[field] = value;
+            }
+        }
+
+        const update = {
+            ...(Object.keys(fieldsToSet).length > 0
+                ? { $set: fieldsToSet }
+                : {}),
+            ...(Object.keys(fieldsToUnset).length > 0
+                ? { $unset: fieldsToUnset }
+                : {}),
+        };
+
         const profile = await ProfileModel.findOneAndUpdate(
             { userId: requester.userId },
-            { $set: input },
+            update,
             {
                 new: true,
                 runValidators: true,
