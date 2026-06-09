@@ -5,8 +5,10 @@ import {
     getValidatedParams,
 } from "../lib/validated-request.js";
 import type {
-    GetProfileInput,
+    GetProfileParams,
     RegisterProfileInput,
+    UpdateProfileInput,
+    UpdateProfileParams,
 } from "../schemas/profile.schema.js";
 import type { ApiResponse } from "../types/api-response.js";
 import {
@@ -60,12 +62,38 @@ export const getMyProfile = asyncHandler(
 
 export const getProfileByUserId = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
-        const params = getValidatedParams<GetProfileInput>(req);
+        const params = getValidatedParams<GetProfileParams>(req);
         const profile = await ProfileService.getProfileByUserId(params.userId);
 
         const response: ApiResponse<ProfileResponse> = {
             success: true,
             message: "Profile retrieved successfully",
+            data: profile,
+        };
+
+        res.status(200).json(response);
+    },
+);
+
+export const updateProfile = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+        const initiator = req.user;
+
+        if (!initiator) {
+            throw new AppError("Authentication required", 401);
+        }
+
+        const params = getValidatedParams<UpdateProfileParams>(req);
+        const body = getValidatedBody<UpdateProfileInput>(req);
+        const profile = await ProfileService.updateProfile(
+            initiator,
+            params.userId,
+            body,
+        );
+
+        const response: ApiResponse<ProfileResponse> = {
+            success: true,
+            message: "Profile updated successfully",
             data: profile,
         };
 
