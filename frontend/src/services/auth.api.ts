@@ -73,16 +73,3 @@ export const getAuthSession = async (): Promise<ApiResponse<LoginResponse>> => {
 
     return response.data;
 };
-
-export const deleteEverything = async (): Promise<ApiResponse<void>> => {
-    const response = await api.delete<ApiResponse<void>>(
-        "/auth/delete-everything",
-        {
-            data: {
-                confirmation: "DELETE",
-            },
-        },
-    );
-
-    return response.data;
-};
